@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 
@@ -26,6 +27,11 @@ class UserSpeed {
                 var longitude = location.longitude
                 var accuracy = location.accuracy
                 var speed = location.speed
+
+                Log.d("latitude", latitude.toString())
+                Log.d("longitude", longitude.toString())
+                Log.d("accuracy", accuracy.toString())
+                Log.d("speed", speed.toString())
             }
         }
     }
