@@ -17,6 +17,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import android.util.Log
+import android.widget.Button
+import android.widget.TextView
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
@@ -58,6 +60,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         Places.initialize(applicationContext, apiKey) // Replace with your API key
         var placesClient = Places.createClient(this)
 
+        // test user speed
 
 
     }
