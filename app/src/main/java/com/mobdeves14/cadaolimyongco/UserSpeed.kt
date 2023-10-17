@@ -11,18 +11,17 @@ import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
 
 class UserSpeed {
-    private var speed: Float = 0F
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
 
     fun start(context: Context) {
         // Initialize the LocationManager
-        this.locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+        locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        Log.d("test", "test")
         // Set up the LocationListener
-        this.locationListener = LocationListener {
+        locationListener = object: LocationListener {
             override fun onLocationChanged(location: Location) {
-                TODO("Not yet implemented")
+                Log.d("test2", "test2")
                 var latitude = location.latitude
                 var longitude = location.longitude
                 var accuracy = location.accuracy
@@ -35,13 +34,13 @@ class UserSpeed {
             }
         }
     }
-    fun startLocationUpdates(activityContext: Context) {
+    fun startLocationUpdates(context: Context) {
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(
-                    activityContext,
+                    context,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    activityContext,
+                    context,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {

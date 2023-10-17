@@ -61,7 +61,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         var placesClient = Places.createClient(this)
 
         // test user speed
-
+        var userSpeed = UserSpeed()
+        userSpeed.start(this)
+        userSpeed.startLocationUpdates(this)
 
     }
     fun getUrl(origin: LatLng, destination: LatLng, travelMode: String): String {
