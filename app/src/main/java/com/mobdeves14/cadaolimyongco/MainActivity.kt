@@ -41,6 +41,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var speedDisplay: TextView
     private val speedUpdateInterval = 500 // Update speed every 1 second
     private var speedUpdateTimer: Timer? = null
+    private lateinit var ETAduration: TextView
+
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
@@ -52,7 +54,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_run)
+        //setup metrics
         this.distanceDisplay = findViewById(R.id.distance)
+        this.ETAduration = findViewById((R.id.duration))
+
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this);
@@ -101,6 +106,20 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                     //Google suggested path distance
                     Log.d(TAG, "Distance: ${it.distance?.text}, ${it.distance?.text}")
                     distanceDisplay.text = it.distance?.text;
+                    var value = it.distance?.text;
+
+                    Log.d(TAG, "${value}")
+                    if (value != null) {
+                        var eta = ((value.split(" ")[0].toDoubleOrNull() ?: 0.0) / 0.107).toInt().toString()
+                        if(eta.toInt() < 1){
+                            ETAduration.text = "< 1 min"
+                        }
+                        else{
+                            ETAduration.text = eta + " min"
+                        }
+                    }
+
+
                 } ?: Log.e(TAG, "Nothing found")
             }
         }
