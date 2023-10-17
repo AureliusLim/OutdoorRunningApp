@@ -24,6 +24,9 @@ import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.gms.common.api.Status
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
+import java.util.Timer
+import java.util.TimerTask
+import java.util.logging.Handler
 
 
 /**
@@ -35,12 +38,15 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var currentloc : LatLng
     private lateinit var distanceDisplay: TextView
-
+    private lateinit var speedDisplay: TextView
+    private val speedUpdateInterval = 500 // Update speed every 1 second
+    private var speedUpdateTimer: Timer? = null
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
         private const val TAG = "MainActivity"
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,6 +66,18 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         var userSpeed = UserSpeed()
         userSpeed.start(this)
         userSpeed.startLocationUpdates(this)
+        this.speedDisplay = findViewById(R.id.userspeed)
+        speedUpdateTimer = Timer()
+        speedUpdateTimer?.schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    // Update the speed display with the latest speed
+                    speedDisplay.text = userSpeed.getUserSpeed() + " km/h"
+                    Log.d("THREADCALLED", "${userSpeed.getUserSpeed()}")
+                }
+            }
+        }, 0, speedUpdateInterval.toLong())
+
 
     }
 

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
@@ -13,7 +14,7 @@ import com.google.android.gms.location.LocationServices
 class UserSpeed {
     private lateinit var locationManager: LocationManager
     private lateinit var locationListener: LocationListener
-
+    private  var userSpeed: Float = 0.0f
     fun start(context: Context) {
         // Initialize the LocationManager
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -26,13 +27,20 @@ class UserSpeed {
                 var longitude = location.longitude
                 var accuracy = location.accuracy
                 var speed = location.speed
-
+                userSpeed = speed
                 Log.d("latitude", latitude.toString())
                 Log.d("longitude", longitude.toString())
                 Log.d("accuracy", accuracy.toString())
                 Log.d("speed", speed.toString())
             }
+            override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
+                // Handle status changed event
+            }
         }
+    }
+    fun getUserSpeed():String{
+        val kph = userSpeed / 1000 * 60
+        return kph.toString()
     }
     fun startLocationUpdates(context: Context) {
         if (locationManager != null) {
