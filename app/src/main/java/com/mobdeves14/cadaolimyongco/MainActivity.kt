@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -14,20 +13,16 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import android.util.Log
+import android.widget.TextView
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.gms.common.api.Status
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
-import com.maps.route.model.TravelMode
 
 
 /**
@@ -38,6 +33,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var lastLocation:Location
     private lateinit var fusedLocationClient : FusedLocationProviderClient
     private lateinit var currentloc : LatLng
+    private lateinit var distanceDisplay: TextView
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -46,9 +42,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_main)
 
+        // Retrieve the content view that renders the map.
+        setContentView(R.layout.activity_run)
+        this.distanceDisplay = findViewById(R.id.distance)
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this);
@@ -61,13 +58,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
 
     }
-    fun getUrl(origin: LatLng, destination: LatLng, travelMode: String): String {
-        val strOrigin = "origin=${origin.latitude},${origin.longitude}"
-        val strDestination = "destination=${destination.latitude},${destination.longitude}"
-        val mode = "mode=$travelMode"
 
-        return "https://maps.googleapis.com/maps/api/directions/json?$strOrigin&$strDestination&$mode&key=AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
-    }
     fun drawRouteToDestination(googleMap: GoogleMap, source: LatLng, destination: LatLng){
 
         googleMap?.run {
@@ -79,8 +70,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 source = source, // Source from where you want to draw path
                 destination = destination, // destination to where you want to draw path
                 context = this@MainActivity, // Activity Context
+
                 travelMode = com.maps.route.model.TravelMode.WALKING//Travel mode, by default it is DRIVING
-            )
+            ){ estimates ->
+                estimates?.let {
+                    //Google Estimated time of arrival
+                    Log.d(TAG, "ETA: ${it.duration?.text}, ${it.duration?.value}")
+                    //Google suggested path distance
+                    Log.d(TAG, "Distance: ${it.distance?.text}, ${it.distance?.text}")
+                    distanceDisplay.text = it.distance?.text;
+                } ?: Log.e(TAG, "Nothing found")
+            }
         }
     }
 
