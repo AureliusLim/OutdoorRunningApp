@@ -39,7 +39,7 @@ class UserSpeed {
         }
     }
     fun getUserSpeed():String{
-        val kph = userSpeed / 1000 * 60
+        val kph = userSpeed * 3.6
         return kph.toString()
     }
     fun startLocationUpdates(context: Context) {
