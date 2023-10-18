@@ -8,8 +8,8 @@
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="763dp"
+        android:layout_width="394dp"
+        android:layout_height="682dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -110,16 +110,6 @@
     </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="429dp"
-        android:layout_height="103dp"
-        android:layout_marginStart="-5dp"
-        android:layout_marginBottom="-5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/wrapper" />
-
-    <ImageButton
         android:id="@+id/imageButton3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -129,5 +119,26 @@
         app:layout_constraintBottom_toBottomOf="@+id/map"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/play" />
+
+    <ImageButton
+        android:id="@+id/progresstab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginBottom="6dp"
+        android:background="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/notprogress" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="68dp"
+        android:layout_marginBottom="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/running" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

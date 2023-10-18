@@ -1,6 +1,7 @@
 package com.mobdeves14.cadaolimyongco
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -14,7 +15,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private val speedUpdateInterval = 500 // Update speed every 1 second
     private var speedUpdateTimer: Timer? = null
     private lateinit var ETAduration: TextView
+    private lateinit var progressTab: ImageButton
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -55,9 +59,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_run)
         //setup metrics
+        this.progressTab = findViewById(R.id.progresstab)
         this.distanceDisplay = findViewById(R.id.distance)
         this.ETAduration = findViewById((R.id.duration))
-
+        progressTab.setOnClickListener {
+            // Create an Intent to switch to the progress activity
+            val intent = Intent(this, ProgressActivity::class.java)
+            startActivity(intent)
+        }
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this);
