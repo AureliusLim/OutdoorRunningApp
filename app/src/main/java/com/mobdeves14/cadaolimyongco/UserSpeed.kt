@@ -33,6 +33,7 @@ class UserSpeed {
                 Log.d("accuracy", accuracy.toString())
                 Log.d("speed", speed.toString())
             }
+            @Deprecated("Deprecated in Java")
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
                 // Handle status changed event
             }
