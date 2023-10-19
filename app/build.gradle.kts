@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.mobdeves14.cadaolimyongco"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.mobdeves14.cadaolimyongco"
