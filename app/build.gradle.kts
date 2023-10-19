@@ -40,6 +40,9 @@ android {
 
 
 dependencies {
+    val lifecycle_version = "2.6.2"
+    val activity_version = "1.8.0"
+    val room_version = "2.5.2"
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
@@ -53,12 +56,20 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    // Room
-    val room_version = "2.5.2"
+    // Lifecycle components
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation ("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
+    // Activity
+    implementation("androidx.activity:activity-ktx:$activity_version")
+
+    // Room
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
 
     // To use Kotlin Symbol Processing (KSP)
     ksp("androidx.room:room-compiler:$room_version")
+
 }
