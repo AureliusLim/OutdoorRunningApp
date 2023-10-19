@@ -31,12 +31,12 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutSpeed = findViewById(R.id.workoutspeed)
         this.actualDate = findViewById(R.id.actualdate)
 
-        this.workoutDuration.text = "Duration \n\n" + workoutList[2].duration.toString()
-        this.workoutCalories.text = "Calories \n\n" + workoutList[2].calories.toString()
-        this.workoutHeart.text = "Heart Rate \n\n" + workoutList[2].heartRate.toString()
-        this.workoutDistance.text = workoutList[2].distance.toString() + "km"
-        this.workoutSpeed.text = "Avg Speed \n\n" + workoutList[2].avgSpeed.toString()
-        this.actualDate.text = workoutList[2].actualdate
+        this.workoutDuration.text = "Duration \n\n" + workoutList[4].duration.toString()
+        this.workoutCalories.text = "Calories \n\n" + workoutList[4].calories.toString()
+        this.workoutHeart.text = "Heart Rate \n\n" + workoutList[4].heartRate.toString()
+        this.workoutDistance.text = workoutList[4].distance.toString() + "km"
+        this.workoutSpeed.text = "Avg Speed \n\n" + workoutList[4].avgSpeed.toString()
+        this.actualDate.text = workoutList[4].actualdate
         this.recyclerView.adapter = WorkoutAdapter(this.workoutList, this)
 
         this.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
