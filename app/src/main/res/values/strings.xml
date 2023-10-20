@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Outdoor Running App</string>
+    <string name="tv_greet"> Good Morning! </string>
+    <string name="tv_date"> Thursday, 14 Oct 2023 </string>
+    <string name="tv_duration_title"> Duration </string>
+    <string name="tv_heart_rate_title"> Avg. Heart Rate </string>
+    <string name="tv_calories_title"> Calories </string>
+    <string name="tv_speed_title"> Avg. Speed </string>
 </resources>
