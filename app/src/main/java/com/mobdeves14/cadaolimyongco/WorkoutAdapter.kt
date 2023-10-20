@@ -1,6 +1,7 @@
 package com.mobdeves14.cadaolimyongco
 
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,7 +18,7 @@ class WorkoutAdapter(private val data: ArrayList<WorkoutModel>, private val list
                       recall: recyclerView.adapter = MyAdapter(this.characterList)
             viewType -> This parameter refers to the
     * */
-    private var clickedPos = -1
+    private var clickedPos = 0
 
 
     private lateinit var onItemClick: (Int) -> Unit // Callback to handle click
@@ -40,9 +41,9 @@ class WorkoutAdapter(private val data: ArrayList<WorkoutModel>, private val list
         // many ways to implement the binding of data.
         val currentItem = data[position]
         holder.bindData(data.get(position))
+
         holder.containerday.setOnClickListener(View.OnClickListener { // When you're inside the click listener interface,
-            // you can access the position using the ViewHolder.
-            // We'll store the position in the member variable in this case.
+
             clickedPos = holder.adapterPosition
             Log.d("ADAPTER POSITION", "$clickedPos")
             listener.onItemClicked(currentItem)

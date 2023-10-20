@@ -3,6 +3,7 @@ package com.mobdeves14.cadaolimyongco
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +28,9 @@ import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.gms.common.api.Status
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 import java.util.logging.Handler
@@ -46,6 +50,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private var speedUpdateTimer: Timer? = null
     private lateinit var ETAduration: TextView
     private lateinit var progressTab: ImageButton
+    private lateinit var currDate: TextView
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -62,6 +67,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         this.progressTab = findViewById(R.id.progresstab)
         this.distanceDisplay = findViewById(R.id.distance)
         this.ETAduration = findViewById((R.id.duration))
+        this.currDate = findViewById(R.id.tv_date2)
+        val calendar = Calendar.getInstance()
+        val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+        val currentDate = calendar.time
+        val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
+        this.currDate.text = formattedDateFullMonth
         progressTab.setOnClickListener {
             // Create an Intent to switch to the progress activity
             val intent = Intent(this, ProgressActivity::class.java)
@@ -145,6 +156,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         val autocompleteFragment =
             supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
         autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
+        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // Handle place selection

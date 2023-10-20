@@ -11,6 +11,7 @@
         android:layout_height="178dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="80dp"
+        android:background="@drawable/item_selector"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

@@ -25,17 +25,17 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.runTab = findViewById(R.id.runtab)
         this.recyclerView = findViewById(R.id.dates)
         this.workoutDistance = findViewById(R.id.workoutdistance)
-        this.workoutDuration = findViewById(R.id.workoutduration)
-        this.workoutCalories = findViewById(R.id.workoutcalories)
-        this.workoutHeart = findViewById(R.id.workoutheart)
-        this.workoutSpeed = findViewById(R.id.workoutspeed)
+        this.workoutDuration = findViewById(R.id.duration_min11)
+        this.workoutCalories = findViewById(R.id.calories_tv)
+        this.workoutHeart = findViewById(R.id.avg_speed_tv2)
+        this.workoutSpeed = findViewById(R.id.avg_speed_tv)
         this.actualDate = findViewById(R.id.actualdate)
 
-        this.workoutDuration.text = "Duration \n\n" + workoutList[0].duration.toString()
-        this.workoutCalories.text = "Calories \n\n" + workoutList[0].calories.toString()
-        this.workoutHeart.text = "Heart Rate \n\n" + workoutList[0].heartRate.toString()
-        this.workoutDistance.text = workoutList[0].distance.toString() + "km"
-        this.workoutSpeed.text = "Avg Speed \n\n" + workoutList[0].avgSpeed.toString()
+        this.workoutDuration.text =  workoutList[0].duration.toString()
+        this.workoutCalories.text =  workoutList[0].calories.toString()
+        this.workoutHeart.text =  workoutList[0].heartRate.toString()
+        this.workoutDistance.text = workoutList[0].distance.toString()
+        this.workoutSpeed.text = workoutList[0].avgSpeed.toString()
         this.actualDate.text = workoutList[0].actualdate
         this.recyclerView.adapter = WorkoutAdapter(this.workoutList, this)
 
@@ -50,11 +50,11 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
     }
 
     override fun onItemClicked(workoutView: WorkoutModel) {
-        this.workoutDuration.text = "Duration \n\n" + workoutView.duration.toString()
-        this.workoutCalories.text = "Calories \n\n" + workoutView.calories.toString()
-        this.workoutHeart.text = "Heart Rate \n\n" + workoutView.heartRate.toString()
-        this.workoutDistance.text = workoutView.distance.toString() + "km"
-        this.workoutSpeed.text = "Avg Speed \n\n" + workoutView.avgSpeed.toString()
+        this.workoutDuration.text = workoutView.duration.toString()
+        this.workoutCalories.text = workoutView.calories.toString()
+        this.workoutHeart.text = workoutView.heartRate.toString()
+        this.workoutDistance.text = workoutView.distance.toString()
+        this.workoutSpeed.text = workoutView.avgSpeed.toString()
         this.actualDate.text = workoutView.actualdate
     }
 }
