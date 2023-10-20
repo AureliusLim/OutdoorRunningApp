@@ -22,16 +22,13 @@ class UserSpeed {
         // Set up the LocationListener
         locationListener = object: LocationListener {
             override fun onLocationChanged(location: Location) {
-                Log.d("test2", "test2")
+
                 var latitude = location.latitude
                 var longitude = location.longitude
                 var accuracy = location.accuracy
                 var speed = location.speed
                 userSpeed = speed
-                Log.d("latitude", latitude.toString())
-                Log.d("longitude", longitude.toString())
-                Log.d("accuracy", accuracy.toString())
-                Log.d("speed", speed.toString())
+
             }
             @Deprecated("Deprecated in Java")
             override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {

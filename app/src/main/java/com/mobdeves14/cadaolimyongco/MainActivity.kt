@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 runOnUiThread {
                     // Update the speed display with the latest speed
                     speedDisplay.text = userSpeed.getUserSpeed() + " km/h"
-                    Log.d("THREADCALLED", "${userSpeed.getUserSpeed()}")
+
                 }
             }
         }, 0, speedUpdateInterval.toLong())

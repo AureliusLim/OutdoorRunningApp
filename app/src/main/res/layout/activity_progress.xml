@@ -46,7 +46,8 @@
         android:layout_marginTop="24dp"
         android:orientation="horizontal"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/trackingtitle" />
+        app:layout_constraintTop_toBottomOf="@+id/trackingtitle"
+        app:reverseLayout="true" />
 
     <TextView
         android:id="@+id/workoutdistance"
