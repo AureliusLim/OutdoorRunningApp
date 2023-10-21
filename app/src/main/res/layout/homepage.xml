@@ -5,6 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/home_btn"
+        android:layout_width="66dp"
+        android:layout_height="67dp"
+        app:layout_marginBottom="8dp"
+        app:layout_marginEnd="152dp"
+        app:layout_marginRight="152dp"
+        app:srcCompat="@drawable/home"
+        tools:layout_editor_absoluteX="169dp"
+        tools:layout_editor_absoluteY="772dp" />
+
     <ImageButton
         android:id="@+id/progresstab3"
         android:layout_width="wrap_content"
