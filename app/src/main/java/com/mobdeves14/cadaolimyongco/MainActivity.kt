@@ -16,8 +16,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.libraries.places.api.Places
@@ -33,7 +31,6 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import java.util.logging.Handler
 
 
 /**
@@ -51,6 +48,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var ETAduration: TextView
     private lateinit var progressTab: ImageButton
     private lateinit var currDate: TextView
+    private lateinit var runTab: ImageButton
+    private var savedMapState: Bundle? = null
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -62,12 +61,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         super.onCreate(savedInstanceState)
 
         // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_run)
+        setContentView(R.layout.activity_home)
         //setup metrics
         this.progressTab = findViewById(R.id.progresstab)
         this.distanceDisplay = findViewById(R.id.distance)
         this.ETAduration = findViewById((R.id.duration))
         this.currDate = findViewById(R.id.tv_date2)
+        this.runTab = findViewById(R.id.runtab)
         val calendar = Calendar.getInstance()
         val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
         val currentDate = calendar.time
@@ -76,8 +76,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         progressTab.setOnClickListener {
             // Create an Intent to switch to the progress activity
             val intent = Intent(this, ProgressActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            startActivity(intent)
+
+        }
+        runTab.setOnClickListener{
+            val intent = Intent(this, RunActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
+
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this);
@@ -153,27 +161,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
         setUpMap()
         // Initialize Autocomplete fragment for place selection
-        val autocompleteFragment =
-            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
-        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                // Handle place selection
-                val destinationLatLng = place.latLng
-                if (destinationLatLng != null) {
-                    Log.d(TAG, destinationLatLng.toString())
-
-                    // Draw route to the selected destination
-                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
-                }
-            }
-
-            override fun onError(status: Status) {
-                // Handle errors
-                Log.e(TAG, "Error: ${status.statusMessage}")
-            }
-        })
+//        val autocompleteFragment =
+//            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+//        autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
+//        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
+//        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+//            override fun onPlaceSelected(place: Place) {
+//                // Handle place selection
+//                val destinationLatLng = place.latLng
+//                if (destinationLatLng != null) {
+//                    Log.d(TAG, destinationLatLng.toString())
+//
+//                    // Draw route to the selected destination
+//                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
+//                }
+//            }
+//
+//            override fun onError(status: Status) {
+//                // Handle errors
+//                Log.e(TAG, "Error: ${status.statusMessage}")
+//            }
+//        })
     }
    private fun setUpMap(){
        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -206,4 +214,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     override fun onMapClick(p0: LatLng) {
         TODO("Not yet implemented")
     }
+
 }

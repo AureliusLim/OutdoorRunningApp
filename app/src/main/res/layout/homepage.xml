@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <ImageButton
-        android:id="@+id/progresstab3"
+        android:id="@+id/progresstab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="76dp"
@@ -17,7 +17,7 @@
         app:srcCompat="@drawable/notprogress" />
 
     <ImageView
-        android:id="@+id/imageView13"
+        android:id="@+id/runtab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="68dp"
@@ -283,6 +283,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.795" />
+
+
 
     </androidx.constraintlayout.motion.widget.MotionLayout>
 
