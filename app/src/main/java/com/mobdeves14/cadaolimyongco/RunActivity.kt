@@ -93,7 +93,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     .hide(autocompleteFragment)
                     .commit()
                 isAutocompleteVisible = false
-                distanceLayout.visibility = View.GONE
+                distanceLayout.visibility = View.VISIBLE
             }
         }
 
