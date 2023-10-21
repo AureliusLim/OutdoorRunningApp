@@ -66,6 +66,9 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.playPauseButton = findViewById(R.id.playpause)
         this.generateroutebtn = findViewById(R.id.generateroute)
         this.setroutebtn = findViewById(R.id.setroute)
+        this.distanceDisplay = findViewById(R.id.distance)
+        this.ETAduration = findViewById(R.id.duration)
+        this.speedDisplay = findViewById(R.id.userspeed)
 
         playPauseButton.setImageResource(R.drawable.play)
         playPauseButton.setOnClickListener {
