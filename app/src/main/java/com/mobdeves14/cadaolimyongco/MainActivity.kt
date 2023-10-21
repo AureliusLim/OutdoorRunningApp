@@ -161,27 +161,27 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
         setUpMap()
         // Initialize Autocomplete fragment for place selection
-        val autocompleteFragment =
-            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-        autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
-        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
-        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-            override fun onPlaceSelected(place: Place) {
-                // Handle place selection
-                val destinationLatLng = place.latLng
-                if (destinationLatLng != null) {
-                    Log.d(TAG, destinationLatLng.toString())
-
-                    // Draw route to the selected destination
-                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
-                }
-            }
-
-            override fun onError(status: Status) {
-                // Handle errors
-                Log.e(TAG, "Error: ${status.statusMessage}")
-            }
-        })
+//        val autocompleteFragment =
+//            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
+//        autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
+//        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
+//        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
+//            override fun onPlaceSelected(place: Place) {
+//                // Handle place selection
+//                val destinationLatLng = place.latLng
+//                if (destinationLatLng != null) {
+//                    Log.d(TAG, destinationLatLng.toString())
+//
+//                    // Draw route to the selected destination
+//                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
+//                }
+//            }
+//
+//            override fun onError(status: Status) {
+//                // Handle errors
+//                Log.e(TAG, "Error: ${status.statusMessage}")
+//            }
+//        })
     }
    private fun setUpMap(){
        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)

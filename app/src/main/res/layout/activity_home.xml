@@ -42,22 +42,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:context="com.mobdeves14.cadaolimyongco.MainActivity" />
 
-    <FrameLayout
-        android:id="@+id/autocomplete_container"
-        android:layout_width="177dp"
-        android:layout_height="37dp"
-        android:layout_marginEnd="13dp"
-        android:background="@null"
-        app:layout_constraintBottom_toTopOf="@+id/map"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <fragment
-            android:id="@+id/autocomplete_fragment"
-            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-            android:layout_width="173dp"
-            android:layout_height="42dp" />
-    </FrameLayout>
-
     <LinearLayout
         android:id="@+id/metricwidget"
         android:layout_width="330dp"
