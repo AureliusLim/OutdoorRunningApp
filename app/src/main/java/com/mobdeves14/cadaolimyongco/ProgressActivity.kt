@@ -17,12 +17,14 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
     private lateinit var workoutHeart: TextView
     private lateinit var workoutSpeed: TextView
     private lateinit var actualDate: TextView
+    private lateinit var homeTab: ImageButton
     private val workoutList: ArrayList<WorkoutModel> = DataGenerator.loadData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_progress)
         this.runTab = findViewById(R.id.runtab)
+        this.homeTab = findViewById(R.id.home_btn)
         this.recyclerView = findViewById(R.id.dates)
         this.workoutDistance = findViewById(R.id.workoutdistance)
         this.workoutDuration = findViewById(R.id.duration_min11)
@@ -43,8 +45,12 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
 
 
 
-        runTab.setOnClickListener{
+        homeTab.setOnClickListener{
             val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+        }
+        runTab.setOnClickListener{
+            val intent = Intent(this, RunActivity::class.java)
             startActivity(intent)
         }
     }

@@ -38,6 +38,9 @@
         <activity
             android:name=".ProgressActivity">
         </activity>
+        <activity
+            android:name=".RunActivity">
+        </activity>
     </application>
 
 </manifest>

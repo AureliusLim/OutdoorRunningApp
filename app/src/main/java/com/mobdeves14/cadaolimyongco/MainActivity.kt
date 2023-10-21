@@ -16,8 +16,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import android.util.Log
-import android.view.View
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import com.google.android.libraries.places.api.Places
@@ -33,7 +31,6 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
-import java.util.logging.Handler
 
 
 /**
@@ -51,6 +48,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var ETAduration: TextView
     private lateinit var progressTab: ImageButton
     private lateinit var currDate: TextView
+    private lateinit var runTab: ImageButton
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -62,12 +60,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         super.onCreate(savedInstanceState)
 
         // Retrieve the content view that renders the map.
-        setContentView(R.layout.activity_run)
+        setContentView(R.layout.activity_home)
         //setup metrics
         this.progressTab = findViewById(R.id.progresstab)
         this.distanceDisplay = findViewById(R.id.distance)
         this.ETAduration = findViewById((R.id.duration))
         this.currDate = findViewById(R.id.tv_date2)
+        this.runTab = findViewById(R.id.runtab)
         val calendar = Calendar.getInstance()
         val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
         val currentDate = calendar.time
@@ -77,7 +76,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             // Create an Intent to switch to the progress activity
             val intent = Intent(this, ProgressActivity::class.java)
             startActivity(intent)
+
         }
+        runTab.setOnClickListener{
+            val intent = Intent(this, RunActivity::class.java)
+            startActivity(intent)
+        }
+
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this);
