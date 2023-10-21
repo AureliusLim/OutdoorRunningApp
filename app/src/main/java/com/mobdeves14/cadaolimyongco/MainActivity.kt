@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var progressTab: ImageButton
     private lateinit var currDate: TextView
     private lateinit var runTab: ImageButton
+    private var savedMapState: Bundle? = null
 
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
@@ -75,11 +76,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         progressTab.setOnClickListener {
             // Create an Intent to switch to the progress activity
             val intent = Intent(this, ProgressActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
 
         }
         runTab.setOnClickListener{
             val intent = Intent(this, RunActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
 
@@ -211,4 +214,5 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     override fun onMapClick(p0: LatLng) {
         TODO("Not yet implemented")
     }
+
 }

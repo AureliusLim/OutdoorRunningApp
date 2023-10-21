@@ -47,10 +47,12 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
 
         homeTab.setOnClickListener{
             val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
         runTab.setOnClickListener {
             val intent = Intent(this, RunActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
     }

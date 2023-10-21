@@ -103,10 +103,12 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 as AutocompleteSupportFragment
         homeTab.setOnClickListener{
             val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
         progressTab.setOnClickListener{
             val intent = Intent(this, ProgressActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
             startActivity(intent)
         }
         distanceLayout = findViewById(R.id.distanceLayout)
