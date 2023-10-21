@@ -30,6 +30,7 @@ import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
 import java.util.Timer
 
+
 class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
     private lateinit var homeTab: ImageButton
     private lateinit var progressTab: ImageButton
@@ -51,7 +52,6 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var metricwidget:LinearLayout
     private lateinit var generateroutebtn: Button
     private lateinit var setroutebtn: Button
-
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -66,6 +66,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.playPauseButton = findViewById(R.id.playpause)
         this.generateroutebtn = findViewById(R.id.generateroute)
         this.setroutebtn = findViewById(R.id.setroute)
+
         playPauseButton.setImageResource(R.drawable.play)
         playPauseButton.setOnClickListener {
             // Toggle between play and pause images
@@ -95,6 +96,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 distanceLayout.visibility = View.GONE
             }
         }
+
+
         // Initialize the Autocomplete fragment
         autocompleteFragment = supportFragmentManager.findFragmentById(R.id.autocomplete_fragment)
                 as AutocompleteSupportFragment
@@ -109,12 +112,24 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         distanceLayout = findViewById(R.id.distanceLayout)
         // Get the SupportMapFragment and request notification when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
+
         mapFragment?.getMapAsync(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         // Initialize Places API
         Places.initialize(applicationContext, apiKey) // Replace with your API key
         var placesClient = Places.createClient(this)
+
+        // default to on generate route click
+        if (isAutocompleteVisible) {
+            // Hide the Autocomplete fragment
+            supportFragmentManager.beginTransaction()
+                .hide(autocompleteFragment)
+                .commit()
+            isAutocompleteVisible = false
+            // Show the distance layout
+            distanceLayout.visibility = View.VISIBLE
+        }
     }
     fun onGenerateRouteClick(view: View) {
         if (isAutocompleteVisible) {

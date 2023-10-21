@@ -49,7 +49,7 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
-        runTab.setOnClickListener{
+        runTab.setOnClickListener {
             val intent = Intent(this, RunActivity::class.java)
             startActivity(intent)
         }
