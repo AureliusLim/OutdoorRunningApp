@@ -26,6 +26,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
 import java.util.Timer
@@ -52,6 +53,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var metricwidget:LinearLayout
     private lateinit var generateroutebtn: Button
     private lateinit var setroutebtn: Button
+    private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -69,6 +71,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.distanceDisplay = findViewById(R.id.distance)
         this.ETAduration = findViewById(R.id.duration)
         this.speedDisplay = findViewById(R.id.userspeed)
+        this.toggleButtonGroup = findViewById(R.id.toggleButtonGroup)
 
         playPauseButton.setImageResource(R.drawable.play)
         playPauseButton.setOnClickListener {
@@ -92,12 +95,18 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 generateroutebtn.visibility = View.VISIBLE
                 setroutebtn.visibility = View.VISIBLE
                 // Hide the Autocomplete fragment
-                supportFragmentManager.beginTransaction()
-                    .hide(autocompleteFragment)
-                    .commit()
-                isAutocompleteVisible = false
-                distanceLayout.visibility = View.VISIBLE
+                if (this.toggleButtonGroup.checkedButtonId == this.generateroutebtn.id) {
+                    distanceLayout.visibility = View.VISIBLE
+                }
+                else if (this.toggleButtonGroup.checkedButtonId == this.setroutebtn.id) {
+                    supportFragmentManager.beginTransaction()
+                        .show(autocompleteFragment)
+                        .commit()
+                    isAutocompleteVisible = true
+                }
             }
+            Log.d("checkedButtonId", this.toggleButtonGroup.checkedButtonId.toString())
+            Log.d("generateroutebtn", generateroutebtn.id.toString())
         }
 
 
