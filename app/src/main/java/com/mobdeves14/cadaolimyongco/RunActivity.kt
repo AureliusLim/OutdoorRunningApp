@@ -16,6 +16,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.Status
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -30,6 +33,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
 import java.util.Timer
+import java.util.TimerTask
 
 
 class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
@@ -54,6 +58,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var generateroutebtn: Button
     private lateinit var setroutebtn: Button
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
+    private var updateRouteTimer: Timer? = null
+    private var updateRouteTask: TimerTask? = null
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -72,7 +78,23 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.ETAduration = findViewById(R.id.duration)
         this.speedDisplay = findViewById(R.id.userspeed)
         this.toggleButtonGroup = findViewById(R.id.toggleButtonGroup)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        startLocationUpdates()
+        // test user speed
+        var userSpeed = UserSpeed()
+        userSpeed.start(this)
+        userSpeed.startLocationUpdates(this)
+        this.speedDisplay = findViewById(R.id.userspeed)
+        speedUpdateTimer = Timer()
+        speedUpdateTimer?.schedule(object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    // Update the speed display with the latest speed
+                    speedDisplay.text = userSpeed.getUserSpeed() + " km/h"
 
+                }
+            }
+        }, 0, speedUpdateInterval.toLong())
         playPauseButton.setImageResource(R.drawable.play)
         playPauseButton.setOnClickListener {
             // Toggle between play and pause images
@@ -186,7 +208,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     Log.d(RunActivity.TAG, destinationLatLng.toString())
 
                     // Draw route to the selected destination
-                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
+                    updateRouteAndETA(destinationLatLng)
                 }
             }
 
@@ -199,7 +221,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     fun drawRouteToDestination(googleMap: GoogleMap, source: LatLng, destination: LatLng){
 
         googleMap?.run {
-            moveCameraOnMap(latLng = source) // if you want to zoom the map to any point
+            //moveCameraOnMap(latLng = source) // if you want to zoom the map to any point
             googleMap.clear()
             //Called the drawRouteOnMap extension to draw the polyline/route on google maps
             drawRouteOnMap(
@@ -207,18 +229,18 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 source = source, // Source from where you want to draw path
                 destination = destination, // destination to where you want to draw path
                 context = this@RunActivity, // Activity Context
-
+                boundMarkers = false,
                 travelMode = com.maps.route.model.TravelMode.WALKING//Travel mode, by default it is DRIVING
             ){ estimates ->
                 estimates?.let {
                     //Google Estimated time of arrival
-                    Log.d(RunActivity.TAG, "ETA: ${it.duration?.text}, ${it.duration?.value}")
+                    //Log.d(RunActivity.TAG, "ETA: ${it.duration?.text}, ${it.duration?.value}")
                     //Google suggested path distance
-                    Log.d(RunActivity.TAG, "Distance: ${it.distance?.text}, ${it.distance?.text}")
+                    //Log.d(RunActivity.TAG, "Distance: ${it.distance?.text}, ${it.distance?.text}")
                     distanceDisplay.text = it.distance?.text;
                     var value = it.distance?.text;
 
-                    Log.d(RunActivity.TAG, "${value}")
+                    //Log.d(RunActivity.TAG, "${value}")
                     if (value != null) {
                         var eta = ((value.split(" ")[0].toDoubleOrNull() ?: 0.0) / 0.107).toInt().toString()
                         if(eta.toInt() < 1){
@@ -230,9 +252,11 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     }
 
 
+
                 } ?: Log.e(RunActivity.TAG, "Nothing found")
             }
         }
+
     }
     private fun setUpMap(){
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -254,6 +278,49 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             }
         }
 
+    }
+
+
+    fun updateRouteAndETA(destination: LatLng) {
+        Log.d("currentLOC", "$currentloc")
+        drawRouteToDestination(mMap, currentloc, destination)
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
+        // Cancel the previous Timer and TimerTask
+        updateRouteTask?.cancel()
+        updateRouteTimer?.purge()
+        // Schedule the next update in 5 seconds
+        updateRouteTimer = Timer()
+        updateRouteTask = object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    updateRouteAndETA(destination)
+                }
+            }
+        }
+
+        updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
+    }
+    // Add a helper function to start location updates
+    fun startLocationUpdates() {
+        val locationRequest = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(5000) // Update every 5 seconds
+            .setFastestInterval(5000)
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
+    }
+    // Define a location callback to handle location updates
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            locationResult.lastLocation?.let { location ->
+                lastLocation = location
+                currentloc = LatLng(location.latitude, location.longitude)
+                // Update the map or any other logic you need with the new location
+            }
+        }
     }
 
     override fun onMapClick(p0: LatLng) {

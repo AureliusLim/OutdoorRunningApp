@@ -108,7 +108,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingTop="5dp"
-                android:text="Avg. Speed"
+                android:text="Speed"
                 android:textColor="#7A7676" />
 
             <TextView
