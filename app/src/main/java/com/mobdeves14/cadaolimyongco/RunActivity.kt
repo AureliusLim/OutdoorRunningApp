@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.Status
@@ -60,14 +61,39 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var toggleButtonGroup: MaterialButtonToggleGroup
     private var updateRouteTimer: Timer? = null
     private var updateRouteTask: TimerTask? = null
+    private lateinit var sharedPrefController: SharedPrefController
+    private var running = false;
+    private lateinit var destinationLatLng: LatLng
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
     }
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
+    override fun onResume() {
+        super.onResume()
+        // Retrieve shared preferences values here
+        this.distanceDisplay.text = sharedPrefController.getDistance()
+        this.ETAduration.text = sharedPrefController.getETA()
+        if (sharedPrefController.getRunning()) {
+            val latLngString = sharedPrefController.getDestination()
+            if (latLngString != null) {
+                val parts = latLngString.split(",")
+                if (parts.size == 2) {
+                    val latitude = parts[0].toDouble()
+                    val longitude = parts[1].toDouble()
+                    val retrievedLatLng = LatLng(latitude, longitude)
+                    this.destinationLatLng = retrievedLatLng
+                    updateRouteAndETA(this.destinationLatLng)
+                }
+            }
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPrefController = SharedPrefController(this)
+        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "")
         setContentView(R.layout.activity_run)
+        sharedPrefController = SharedPrefController(this)
         this.homeTab = findViewById(R.id.home_btn)
         this.metricwidget = findViewById(R.id.metricwidget)
         this.progressTab = findViewById(R.id.progresstab)
@@ -138,7 +164,9 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         homeTab.setOnClickListener{
             val intent = Intent(this, MainActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            startActivity(intent)
+
+           startActivity(intent)
+
         }
         progressTab.setOnClickListener{
             val intent = Intent(this, ProgressActivity::class.java)
@@ -203,9 +231,11 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
             override fun onPlaceSelected(place: Place) {
                 // Handle place selection
-                val destinationLatLng = place.latLng
+                destinationLatLng = place.latLng
+                sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
                 if (destinationLatLng != null) {
                     Log.d(RunActivity.TAG, destinationLatLng.toString())
+                    running = true
 
                     // Draw route to the selected destination
                     updateRouteAndETA(destinationLatLng)
@@ -253,6 +283,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
 
 
 
+
                 } ?: Log.e(RunActivity.TAG, "Nothing found")
             }
         }
@@ -282,6 +313,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
 
 
     fun updateRouteAndETA(destination: LatLng) {
+        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
         Log.d("currentLOC", "$currentloc")
         drawRouteToDestination(mMap, currentloc, destination)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))

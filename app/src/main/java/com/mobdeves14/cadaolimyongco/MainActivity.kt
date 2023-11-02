@@ -18,12 +18,16 @@ import com.google.android.gms.maps.model.LatLng
 import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.viewModels
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.libraries.places.api.model.Place.Field
 import com.google.android.gms.common.api.Status
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.maps.route.extensions.drawRouteOnMap
 import com.maps.route.extensions.moveCameraOnMap
 import java.text.SimpleDateFormat
@@ -50,16 +54,42 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var currDate: TextView
     private lateinit var runTab: ImageButton
     private var savedMapState: Bundle? = null
-
+    private var updateRouteTimer: Timer? = null
+    private var updateRouteTask: TimerTask? = null
+    private lateinit var sharedPrefController : SharedPrefController
+    private lateinit var destinationLatLng: LatLng
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
         private const val TAG = "MainActivity"
+
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        // Retrieve shared preferences values here
+        this.distanceDisplay.text = sharedPrefController.getDistance()
+        this.ETAduration.text = sharedPrefController.getETA()
+        if (sharedPrefController.getRunning()) {
+            val latLngString = sharedPrefController.getDestination()
+            if (latLngString != null) {
+                val parts = latLngString.split(",")
+                if (parts.size == 2) {
+                    val latitude = parts[0].toDouble()
+                    val longitude = parts[1].toDouble()
+                    val retrievedLatLng = LatLng(latitude, longitude)
+                    this.destinationLatLng = retrievedLatLng
+                    updateRouteAndETA(this.destinationLatLng)
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        sharedPrefController = SharedPrefController(this)
+        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "")
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_home)
         //setup metrics
@@ -95,6 +125,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         Places.initialize(applicationContext, apiKey) // Replace with your API key
         var placesClient = Places.createClient(this)
 
+        startLocationUpdates()
+
         // test user speed
         var userSpeed = UserSpeed()
         userSpeed.start(this)
@@ -114,6 +146,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
     }
 
+
+
+
     fun drawRouteToDestination(googleMap: GoogleMap, source: LatLng, destination: LatLng){
 
         googleMap?.run {
@@ -125,7 +160,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 source = source, // Source from where you want to draw path
                 destination = destination, // destination to where you want to draw path
                 context = this@MainActivity, // Activity Context
-
+                boundMarkers = false,
                 travelMode = com.maps.route.model.TravelMode.WALKING//Travel mode, by default it is DRIVING
             ){ estimates ->
                 estimates?.let {
@@ -160,55 +195,70 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         mMap.uiSettings.isZoomControlsEnabled = true
 
         setUpMap()
-        // Initialize Autocomplete fragment for place selection
-//        val autocompleteFragment =
-//            supportFragmentManager.findFragmentById(R.id.autocomplete_fragment) as AutocompleteSupportFragment
-//        autocompleteFragment.setPlaceFields(listOf(Field.ID, Field.NAME, Field.LAT_LNG))
-//        autocompleteFragment.view?.setBackgroundColor(Color.rgb(242, 245, 244))
-//        autocompleteFragment.setOnPlaceSelectedListener(object : PlaceSelectionListener {
-//            override fun onPlaceSelected(place: Place) {
-//                // Handle place selection
-//                val destinationLatLng = place.latLng
-//                if (destinationLatLng != null) {
-//                    Log.d(TAG, destinationLatLng.toString())
-//
-//                    // Draw route to the selected destination
-//                    drawRouteToDestination(googleMap,currentloc,destinationLatLng)
-//                }
-//            }
-//
-//            override fun onError(status: Status) {
-//                // Handle errors
-//                Log.e(TAG, "Error: ${status.statusMessage}")
-//            }
-//        })
     }
-   private fun setUpMap(){
-       if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-           != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-           != PackageManager.PERMISSION_GRANTED
-       ) {
-           ActivityCompat.requestPermissions(this,arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_REQUEST_CODE)
-           return
-       }
-       mMap.isMyLocationEnabled = true
-       fusedLocationClient.lastLocation.addOnSuccessListener(this){location ->
-           if(location != null){
-               lastLocation = location
-               val currentLatLong = LatLng(location.latitude, location.longitude)
-               placeMarkerOnMap(currentLatLong)
-               mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 12f))
-               currentloc = currentLatLong
-           }
-       }
+    private fun setUpMap(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this,arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                RunActivity.LOCATION_REQUEST_CODE
+            )
+            return
+        }
+        mMap.isMyLocationEnabled = true
+        fusedLocationClient.lastLocation.addOnSuccessListener(this){location ->
+            if(location != null){
+                lastLocation = location
+                val currentLatLong = LatLng(location.latitude, location.longitude)
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 12f))
+                currentloc = currentLatLong
+            }
+        }
 
-   }
+    }
 
-    private fun placeMarkerOnMap(currentLatLong: LatLng){
-//        val markerOptions = MarkerOptions().position(currentLatLong)
-//        markerOptions.title("$currentLatLong")
-//        mMap.addMarker(markerOptions)
-//        Log.d(TAG, currentLatLong.toString())
+    fun updateRouteAndETA(destination: LatLng) {
+        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), true,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
+        Log.d("currentLOC", "$currentloc")
+        drawRouteToDestination(mMap, currentloc, destination)
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
+        // Cancel the previous Timer and TimerTask
+        updateRouteTask?.cancel()
+        updateRouteTimer?.purge()
+        // Schedule the next update in 5 seconds
+        updateRouteTimer = Timer()
+        updateRouteTask = object : TimerTask() {
+            override fun run() {
+                runOnUiThread {
+                    updateRouteAndETA(destination)
+                }
+            }
+        }
+
+        updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
+    }
+    // Add a helper function to start location updates
+    fun startLocationUpdates() {
+        val locationRequest = LocationRequest.create()
+            .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+            .setInterval(5000) // Update every 5 seconds
+            .setFastestInterval(5000)
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        }
+    }
+    // Define a location callback to handle location updates
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+            locationResult.lastLocation?.let { location ->
+                lastLocation = location
+                currentloc = LatLng(location.latitude, location.longitude)
+                // Update the map or any other logic you need with the new location
+            }
+        }
     }
 
     override fun onMapClick(p0: LatLng) {
