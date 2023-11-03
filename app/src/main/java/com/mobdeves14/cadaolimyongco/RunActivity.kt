@@ -1,18 +1,23 @@
 package com.mobdeves14.cadaolimyongco
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.activity.viewModels
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.Status
@@ -32,7 +37,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maps.route.extensions.drawRouteOnMap
-import com.maps.route.extensions.moveCameraOnMap
+import java.security.AccessController.getContext
 import java.util.Timer
 import java.util.TimerTask
 
@@ -43,7 +48,6 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private var isAutocompleteVisible = true
     private lateinit var autocompleteFragment: AutocompleteSupportFragment
     private lateinit var distanceLayout: LinearLayout
-
     private lateinit var mMap: GoogleMap
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient : FusedLocationProviderClient
@@ -64,6 +68,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var sharedPrefController: SharedPrefController
     private var running = false;
     private lateinit var destinationLatLng: LatLng
+    private lateinit var generateDistance: EditText
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -71,6 +76,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     override fun onResume() {
         super.onResume()
+
         // Retrieve shared preferences values here
         this.distanceDisplay.text = sharedPrefController.getDistance()
         this.ETAduration.text = sharedPrefController.getETA()
@@ -106,6 +112,43 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.toggleButtonGroup = findViewById(R.id.toggleButtonGroup)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startLocationUpdates()
+        this.generateDistance = findViewById(R.id.distanceEditText)
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        this.generateDistance.setOnEditorActionListener { _, actionId, event ->
+            if(actionId == EditorInfo.IME_ACTION_DONE ||  (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                var value = this.generateDistance.text.toString()
+                var num = value.toDouble()
+                if (value.isNotEmpty() && num > 0 && num <= 10) {
+                    // Convert the input value to a double (kilometers)
+                    val distanceInKm = value.toDouble()
+
+                    // Generate a random destination based on the distance
+                    val randomDestination = generateRandomDestination(distanceInKm)
+                    destinationLatLng = randomDestination
+                    running = true
+                    // Save destination and other metrics in SharedPreferences
+                    sharedPrefController.saveMetrics(
+                        distanceDisplay.text.toString(),
+                        ETAduration.text.toString(),
+                        running,
+                        destinationLatLng.longitude.toString(),
+                        destinationLatLng.latitude.toString()
+                    )
+                    startRun()
+                    // Draw the route to the randomly generated destination
+                    updateRouteAndETA(destinationLatLng)
+                }
+                else{
+                    Toast.makeText(this, "Distance has to be within 0-10 km", Toast.LENGTH_SHORT).show()
+                }
+                inputMethodManager.hideSoftInputFromWindow(this.generateDistance.windowToken, 0)
+
+                return@setOnEditorActionListener true
+
+            }
+            return@setOnEditorActionListener false
+            }
+
         // test user speed
         var userSpeed = UserSpeed()
         userSpeed.start(this)
@@ -124,35 +167,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         playPauseButton.setImageResource(R.drawable.play)
         playPauseButton.setOnClickListener {
             // Toggle between play and pause images
-            isPlaying = !isPlaying
-            if (isPlaying) {
-                playPauseButton.setImageResource(R.drawable.pause)
-                metricwidget.visibility = View.VISIBLE
-                generateroutebtn.visibility = View.GONE
-                setroutebtn.visibility = View.GONE
-                // Hide the Autocomplete fragment
-                supportFragmentManager.beginTransaction()
-                    .hide(autocompleteFragment)
-                    .commit()
-                isAutocompleteVisible = false
-                distanceLayout.visibility = View.GONE
-
-            } else {
-                playPauseButton.setImageResource(R.drawable.play)
-                metricwidget.visibility = View.GONE
-                generateroutebtn.visibility = View.VISIBLE
-                setroutebtn.visibility = View.VISIBLE
-                // Hide the Autocomplete fragment
-                if (this.toggleButtonGroup.checkedButtonId == this.generateroutebtn.id) {
-                    distanceLayout.visibility = View.VISIBLE
-                }
-                else if (this.toggleButtonGroup.checkedButtonId == this.setroutebtn.id) {
-                    supportFragmentManager.beginTransaction()
-                        .show(autocompleteFragment)
-                        .commit()
-                    isAutocompleteVisible = true
-                }
-            }
+            startRun()
             Log.d("checkedButtonId", this.toggleButtonGroup.checkedButtonId.toString())
             Log.d("generateroutebtn", generateroutebtn.id.toString())
         }
@@ -193,6 +208,37 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             isAutocompleteVisible = false
             // Show the distance layout
             distanceLayout.visibility = View.VISIBLE
+        }
+    }
+    fun startRun(){
+        isPlaying = !isPlaying
+        if (isPlaying) {
+            playPauseButton.setImageResource(R.drawable.pause)
+            metricwidget.visibility = View.VISIBLE
+            generateroutebtn.visibility = View.GONE
+            setroutebtn.visibility = View.GONE
+            // Hide the Autocomplete fragment
+            supportFragmentManager.beginTransaction()
+                .hide(autocompleteFragment)
+                .commit()
+            isAutocompleteVisible = false
+            distanceLayout.visibility = View.GONE
+
+        } else {
+            playPauseButton.setImageResource(R.drawable.play)
+            metricwidget.visibility = View.GONE
+            generateroutebtn.visibility = View.VISIBLE
+            setroutebtn.visibility = View.VISIBLE
+            // Hide the Autocomplete fragment
+            if (this.toggleButtonGroup.checkedButtonId == this.generateroutebtn.id) {
+                distanceLayout.visibility = View.VISIBLE
+            }
+            else if (this.toggleButtonGroup.checkedButtonId == this.setroutebtn.id) {
+                supportFragmentManager.beginTransaction()
+                    .show(autocompleteFragment)
+                    .commit()
+                isAutocompleteVisible = true
+            }
         }
     }
     fun onGenerateRouteClick(view: View) {
@@ -354,6 +400,26 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             }
         }
     }
+    private fun generateRandomDestination(distanceInKm: Double): LatLng {
+        // Earth radius in kilometers
+        val earthRadius = 6371.0
+        var adjusted = distanceInKm / 1.8
+        // Generate a random angle in radians
+        val randomAngle = Math.toRadians(Math.random() * 360.0)
+
+        // Calculate the latitude and longitude offsets
+        val latOffset = (adjusted/ earthRadius) * (180.0 / Math.PI)
+        val lngOffset = (adjusted / earthRadius) * (180.0 / Math.PI) / Math.cos(Math.toRadians(lastLocation.latitude))
+
+        // Calculate the new latitude and longitude
+        val newLat = lastLocation.latitude + latOffset
+        val newLng = lastLocation.longitude + lngOffset
+
+        return LatLng(newLat, newLng)
+    }
+
+
+
 
     override fun onMapClick(p0: LatLng) {
         TODO("Not yet implemented")
