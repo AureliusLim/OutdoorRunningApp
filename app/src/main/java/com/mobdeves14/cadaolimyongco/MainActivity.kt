@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPrefController = SharedPrefController(this)
-        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "")
+        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_home)
         //setup metrics
@@ -219,7 +219,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     }
 
     fun updateRouteAndETA(destination: LatLng) {
-        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), true,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
+        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), true,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), sharedPrefController.getPlay())
         Log.d("currentLOC", "$currentloc")
         drawRouteToDestination(mMap, currentloc, destination)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))

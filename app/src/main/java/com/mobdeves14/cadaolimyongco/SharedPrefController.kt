@@ -9,7 +9,7 @@ class SharedPrefController(context: Context){
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
-    fun saveMetrics(distance: String, ETA: String, running: Boolean, longitudeString: String, latitudeString: String){
+    fun saveMetrics(distance: String, ETA: String, running: Boolean, longitudeString: String, latitudeString: String, play: Boolean){
         val editor = sharedPreferences.edit()
         editor.putString("distance", distance)
         editor.putString("ETA", ETA)
@@ -31,6 +31,9 @@ class SharedPrefController(context: Context){
 
     fun getDestination(): String? {
         return sharedPreferences.getString("latLng", null)
+    }
+    fun getPlay(): Boolean{
+        return sharedPreferences.getBoolean("play", false)
     }
 
 

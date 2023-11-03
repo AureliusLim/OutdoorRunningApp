@@ -66,7 +66,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private var updateRouteTimer: Timer? = null
     private var updateRouteTask: TimerTask? = null
     private lateinit var sharedPrefController: SharedPrefController
-    private var running = false;
+    private var running = false
     private lateinit var destinationLatLng: LatLng
     private lateinit var generateDistance: EditText
     companion object{
@@ -80,6 +80,13 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         // Retrieve shared preferences values here
         this.distanceDisplay.text = sharedPrefController.getDistance()
         this.ETAduration.text = sharedPrefController.getETA()
+        this.running = sharedPrefController.getRunning()
+        if(this.isPlaying){
+            playPauseButton.setImageResource(R.drawable.pause)
+        }
+        else{
+            playPauseButton.setImageResource(R.drawable.play)
+        }
         if (sharedPrefController.getRunning()) {
             val latLngString = sharedPrefController.getDestination()
             if (latLngString != null) {
@@ -97,7 +104,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPrefController = SharedPrefController(this)
-        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "")
+        sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
         setContentView(R.layout.activity_run)
         sharedPrefController = SharedPrefController(this)
         this.homeTab = findViewById(R.id.home_btn)
@@ -126,15 +133,16 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     val randomDestination = generateRandomDestination(distanceInKm)
                     destinationLatLng = randomDestination
                     running = true
+                    startRun()
                     // Save destination and other metrics in SharedPreferences
                     sharedPrefController.saveMetrics(
                         distanceDisplay.text.toString(),
                         ETAduration.text.toString(),
                         running,
                         destinationLatLng.longitude.toString(),
-                        destinationLatLng.latitude.toString()
+                        destinationLatLng.latitude.toString(),
+                        this.isPlaying
                     )
-                    startRun()
                     // Draw the route to the randomly generated destination
                     updateRouteAndETA(destinationLatLng)
                 }
@@ -164,12 +172,20 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 }
             }
         }, 0, speedUpdateInterval.toLong())
+
+
+
+
         playPauseButton.setImageResource(R.drawable.play)
+
         playPauseButton.setOnClickListener {
-            // Toggle between play and pause images
-            startRun()
-            Log.d("checkedButtonId", this.toggleButtonGroup.checkedButtonId.toString())
-            Log.d("generateroutebtn", generateroutebtn.id.toString())
+            if(running){
+                // Toggle between play and pause images
+                startRun()
+                Log.d("checkedButtonId", this.toggleButtonGroup.checkedButtonId.toString())
+                Log.d("generateroutebtn", generateroutebtn.id.toString())
+            }
+
         }
 
 
@@ -212,6 +228,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     }
     fun startRun(){
         isPlaying = !isPlaying
+
         if (isPlaying) {
             playPauseButton.setImageResource(R.drawable.pause)
             metricwidget.visibility = View.VISIBLE
@@ -278,11 +295,11 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             override fun onPlaceSelected(place: Place) {
                 // Handle place selection
                 destinationLatLng = place.latLng
-                sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
+                running = true
+                startRun()
+                sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), isPlaying)
                 if (destinationLatLng != null) {
                     Log.d(RunActivity.TAG, destinationLatLng.toString())
-                    running = true
-
                     // Draw route to the selected destination
                     updateRouteAndETA(destinationLatLng)
                 }
@@ -359,7 +376,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
 
 
     fun updateRouteAndETA(destination: LatLng) {
-        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString())
+        sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), isPlaying)
         Log.d("currentLOC", "$currentloc")
         drawRouteToDestination(mMap, currentloc, destination)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
