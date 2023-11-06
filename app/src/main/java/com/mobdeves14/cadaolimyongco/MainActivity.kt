@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -58,7 +60,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private var updateRouteTask: TimerTask? = null
     private lateinit var sharedPrefController : SharedPrefController
     private lateinit var destinationLatLng: LatLng
+    private val updateInterval = 1000 // Update speed every 1 second
+    private var updateMetricsTimer: Timer? = null
+    private var updateMetricsTask: TimerTask? = null
+    private lateinit var timeElapsed: TextView
+    private lateinit var calories: TextView
+    private lateinit var pace: TextView
+    private lateinit var avgSpeed: TextView
+
+    private var startTime: Long = 0
+    private var elapsedTime: Long = 0
+    private var totalDistance: Double = 0.0
+    private var totalCaloriesBurned: Double = 0.0
+
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
+    private lateinit var handlerThread: HandlerThread
+    private lateinit var handler: Handler
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
         private const val TAG = "MainActivity"
@@ -71,6 +88,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         // Retrieve shared preferences values here
         this.distanceDisplay.text = sharedPrefController.getDistance()
         this.ETAduration.text = sharedPrefController.getETA()
+
+        if(sharedPrefController.getPlay()){
+            updateMetrics()
+        }
         if (sharedPrefController.getRunning()) {
             val latLngString = sharedPrefController.getDestination()
             if (latLngString != null) {
@@ -86,12 +107,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handlerThread.quitSafely()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedPrefController = SharedPrefController(this)
         sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
         // Retrieve the content view that renders the map.
         setContentView(R.layout.activity_home)
+        //setup statistics
+        this.timeElapsed = findViewById(R.id.duration_min11)
+        this.calories = findViewById(R.id.calories_tv)
+        this.pace = findViewById(R.id.avg_speed_tv2)
+        this.avgSpeed = findViewById(R.id.avg_speed_tv)
+        handlerThread = HandlerThread("UpdateMetricsThread")
+        handlerThread.start()
+        handler = Handler(handlerThread.looper)
+
         //setup metrics
         this.progressTab = findViewById(R.id.progresstab)
         this.distanceDisplay = findViewById(R.id.distance)
@@ -259,6 +294,63 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 // Update the map or any other logic you need with the new location
             }
         }
+    }
+    private fun updateMetrics() {
+
+        startTime += 1
+
+
+        elapsedTime = startTime
+        val elapsedSeconds = elapsedTime / 1000
+        val elapsedMinutes = elapsedSeconds / 60
+        val elapsedHours = elapsedMinutes / 60
+
+
+        // Calculate average speed (using current speed as an example)
+        val currentSpeed = speedDisplay.text.toString().replace(" km/h", "").toDoubleOrNull() ?: 0.0
+        val totalSpeed = totalDistance / (elapsedHours + elapsedMinutes / 60.0)
+
+        totalDistance += currentSpeed * (elapsedSeconds / 3600)
+
+        // Calculate average pace (time to cover 1 km)
+        val averagePace = if (totalDistance > 0) {
+            (elapsedMinutes + elapsedHours * 60) / totalDistance
+        } else {
+            0.0
+        }
+
+
+        val caloriesBurned = totalDistance * 0.1
+
+        totalCaloriesBurned += caloriesBurned
+        this.timeElapsed.text = formatTime(startTime)
+
+        //this.timeElapsed.text = startTime.toString()
+        this.pace.text = averagePace.toString()
+        this.calories.text = totalCaloriesBurned.toString()
+        this.avgSpeed.text = currentSpeed.toString()
+
+        updateMetricsTask?.cancel()
+        updateMetricsTimer?.purge()
+
+        updateMetricsTimer = Timer()
+        updateMetricsTask = object : TimerTask() {
+            override fun run() {
+                runOnUiThread{
+                    if(sharedPrefController.getPlay()){
+                        updateMetrics()
+                    }
+                }
+            }
+        }
+        updateMetricsTimer?.schedule(updateMetricsTask, 1000)
+
+
+    }
+    private fun formatTime(seconds: Long): String {
+        val minutes = (seconds / 60).toInt()
+        val remainingSeconds = (seconds % 60).toInt()
+        return String.format("%02d:%02d", minutes, remainingSeconds)
     }
 
     override fun onMapClick(p0: LatLng) {

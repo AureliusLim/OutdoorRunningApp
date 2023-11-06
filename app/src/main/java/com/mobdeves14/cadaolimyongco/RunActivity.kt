@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -16,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -69,6 +71,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private var running = false
     private lateinit var destinationLatLng: LatLng
     private lateinit var generateDistance: EditText
+    private lateinit var loadingProgressBar: ProgressBar
+    private lateinit var blockingView: View
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -81,6 +85,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.distanceDisplay.text = sharedPrefController.getDistance()
         this.ETAduration.text = sharedPrefController.getETA()
         this.running = sharedPrefController.getRunning()
+
         if(this.isPlaying){
             playPauseButton.setImageResource(R.drawable.pause)
         }
@@ -117,6 +122,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.ETAduration = findViewById(R.id.duration)
         this.speedDisplay = findViewById(R.id.userspeed)
         this.toggleButtonGroup = findViewById(R.id.toggleButtonGroup)
+        this.loadingProgressBar = findViewById(R.id.loadingProgressBar)
+        this.blockingView = findViewById(R.id.blockingView)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startLocationUpdates()
         this.generateDistance = findViewById(R.id.distanceEditText)
@@ -182,6 +189,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             if(running){
                 // Toggle between play and pause images
                 startRun()
+                showLoadingIndicator()
                 Log.d("checkedButtonId", this.toggleButtonGroup.checkedButtonId.toString())
                 Log.d("generateroutebtn", generateroutebtn.id.toString())
             }
@@ -228,7 +236,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     }
     fun startRun(){
         isPlaying = !isPlaying
-
+        sharedPrefController.changePlay(isPlaying)
         if (isPlaying) {
             playPauseButton.setImageResource(R.drawable.pause)
             metricwidget.visibility = View.VISIBLE
@@ -257,6 +265,16 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                 isAutocompleteVisible = true
             }
         }
+    }
+    private fun showLoadingIndicator() {
+        loadingProgressBar.visibility = View.VISIBLE
+        blockingView.visibility = View.VISIBLE
+
+        // Delay for 4 seconds and then hide the loading indicator and blocking view
+        Handler().postDelayed({
+            loadingProgressBar.visibility = View.INVISIBLE
+            blockingView.visibility = View.INVISIBLE
+        }, 4000)
     }
     fun onGenerateRouteClick(view: View) {
         if (isAutocompleteVisible) {

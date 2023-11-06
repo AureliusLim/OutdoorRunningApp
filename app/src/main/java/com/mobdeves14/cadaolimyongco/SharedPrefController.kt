@@ -16,6 +16,7 @@ class SharedPrefController(context: Context){
         editor.putBoolean("running", running)
         // add code here on saving longitude string and latitude string separately
         editor.putString("latLng", "$latitudeString,$longitudeString")
+        editor.putBoolean("play",play)
         editor.apply()
     }
 
@@ -34,6 +35,12 @@ class SharedPrefController(context: Context){
     }
     fun getPlay(): Boolean{
         return sharedPreferences.getBoolean("play", false)
+    }
+
+    fun changePlay(play: Boolean){
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("play",!play)
+        editor.apply()
     }
 
 
