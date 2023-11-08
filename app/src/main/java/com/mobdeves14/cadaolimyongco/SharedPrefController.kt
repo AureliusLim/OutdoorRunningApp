@@ -18,9 +18,6 @@ class SharedPrefController(context: Context){
         editor.putString("latLng", "$latitudeString,$longitudeString")
         editor.putBoolean("play",play)
         editor.apply()
-
-//        val workout = Workout(distance.toInt(), 0, 0.0f)
-//        workoutViewModel.insert(workout)
     }
 
     fun getDistance(): String? {
