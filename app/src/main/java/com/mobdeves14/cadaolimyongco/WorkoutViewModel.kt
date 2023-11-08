@@ -7,13 +7,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.launch
 
-class WorkoutViewModel(private val repository: WorkoutRepository) : ViewModel() {
+class WordViewModel(private val repository: WorkoutRepository) : ViewModel() {
 
     // Using LiveData and caching what allWords returns has several benefits:
     // - We can put an observer on the data (instead of polling for changes) and only update the
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
-    val allWorkouts: LiveData<List<Workout>> = repository.allWorkouts.asLiveData()
+    val allWords: LiveData<List<Workout>> = repository.allWorkouts.asLiveData()
 
     /**
      * Launching a new coroutine to insert the data in a non-blocking way
@@ -23,11 +23,11 @@ class WorkoutViewModel(private val repository: WorkoutRepository) : ViewModel() 
     }
 }
 
-class WorkoutViewModelFactory(private val repository: WorkoutRepository) : ViewModelProvider.Factory {
+class WordViewModelFactory(private val repository: WorkoutRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WorkoutViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(WordViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return WorkoutViewModel(repository) as T
+            return WordViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

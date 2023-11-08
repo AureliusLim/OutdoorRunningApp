@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +19,6 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
     private lateinit var actualDate: TextView
     private lateinit var homeTab: ImageButton
     private val workoutList: ArrayList<WorkoutModel> = DataGenerator.loadData()
-
-    private val workoutViewModel: WorkoutViewModel by viewModels {
-        WorkoutViewModelFactory((application as WorkoutApplication).repository)
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,16 +39,10 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutDistance.text = workoutList[0].distance.toString()
         this.workoutSpeed.text = workoutList[0].avgSpeed.toString()
         this.actualDate.text = workoutList[0].actualdate
-        val adapter = WorkoutListAdapter()
-        this.recyclerView.adapter = adapter
+        this.recyclerView.adapter = WorkoutAdapter(this.workoutList, this)
 
-        this.recyclerView.layoutManager  = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        this.recyclerView.layoutManager  = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-
-        workoutViewModel.allWorkouts.observe(this) { workouts ->
-            // Update the cached copy of the words in the adapter.
-            workouts.let { adapter.submitList(it) }
-        }
 
 
         homeTab.setOnClickListener{
