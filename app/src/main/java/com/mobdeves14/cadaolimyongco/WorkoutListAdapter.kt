@@ -16,16 +16,18 @@ class WorkoutListAdapter : ListAdapter<Workout, WorkoutListAdapter.WorkoutViewHo
 
     override fun onBindViewHolder(holder: WorkoutViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current.distance.toString())
-        holder.bind(current.duration.toString())
-        holder.bind(current.avgSpeed.toString())
+        holder.bind(current)
     }
 
     class WorkoutViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val wordItemView: TextView = itemView.findViewById(R.id.textView)
+        private val distancetv: TextView = itemView.findViewById(R.id.distancetv)
+        private val durationtv: TextView = itemView.findViewById(R.id.durationtv)
+        private val avgspeedtv: TextView = itemView.findViewById(R.id.avgspeedtv)
 
-        fun bind(text: String?) {
-            wordItemView.text = text
+        fun bind(workout: Workout) {
+            distancetv.text = workout.distance.toString()
+            durationtv.text = workout.duration.toString()
+            avgspeedtv.text = workout.avgSpeed.toString()
         }
 
         companion object {
