@@ -89,10 +89,30 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         this.distanceDisplay.text = sharedPrefController.getDistance()
         this.ETAduration.text = sharedPrefController.getETA()
 
-        if(sharedPrefController.getPlay()){
-            updateMetrics()
+//        if(sharedPrefController.getPlay()){
+//            updateMetrics()
+//        }
+        if(sharedPrefController.getStopped()){
+            updateRouteTimer?.purge()
+            updateRouteTask?.cancel()
+            mMap?.clear()
+            sharedPrefController.setStopped(false)
+            // SAVE THE WORKOUT DETAILS HERE
+            // I ASSUME WE NEED TO ALSO SAVE THE CURRENT DATE, so need to get currentdate here
+            //save each entry as this.timeElapsed.text, this.pace.text, this.calories.text, this.avgSpeed.text, the date
+
+            //then when clicking on the calendar, search all similar dates and set it to the average for all the texts fields
+
+
+            // AFTERWARDS
+            // SET ALL THE TEXT TO 0
+            //    this.timeElapsed.text = 0
+            //    this.pace.text = 0
+            //    this.calories.text = 0
+            //    this.avgSpeed.text = 0
         }
         if (sharedPrefController.getRunning()) {
+            Log.d("updatedmain","updated main map")
             val latLngString = sharedPrefController.getDestination()
             if (latLngString != null) {
                 val parts = latLngString.split(",")
@@ -142,12 +162,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             // Create an Intent to switch to the progress activity
             val intent = Intent(this, ProgressActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            updateRouteTask?.cancel()
+            updateRouteTimer?.purge()
             startActivity(intent)
 
         }
         runTab.setOnClickListener{
             val intent = Intent(this, RunActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            updateRouteTask?.cancel()
+            updateRouteTimer?.purge()
             startActivity(intent)
         }
 
@@ -161,7 +185,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         var placesClient = Places.createClient(this)
 
         startLocationUpdates()
-
+        updateMetrics()
         // test user speed
         var userSpeed = UserSpeed()
         userSpeed.start(this)
@@ -255,23 +279,26 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
     fun updateRouteAndETA(destination: LatLng) {
         sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), true,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), sharedPrefController.getPlay())
-        Log.d("currentLOC", "$currentloc")
+
         drawRouteToDestination(mMap, currentloc, destination)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
         // Cancel the previous Timer and TimerTask
         updateRouteTask?.cancel()
         updateRouteTimer?.purge()
         // Schedule the next update in 5 seconds
-        updateRouteTimer = Timer()
-        updateRouteTask = object : TimerTask() {
-            override fun run() {
-                runOnUiThread {
-                    updateRouteAndETA(destination)
+        if(sharedPrefController.getRunning()){
+            updateRouteTimer = Timer()
+            updateRouteTask = object : TimerTask() {
+                override fun run() {
+                    runOnUiThread {
+                        updateRouteAndETA(destination)
+                    }
                 }
             }
+
+            updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
         }
 
-        updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
     }
     // Add a helper function to start location updates
     fun startLocationUpdates() {
@@ -296,39 +323,39 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         }
     }
     private fun updateMetrics() {
-
-        startTime += 1
-
-
-        elapsedTime = startTime
-        val elapsedSeconds = elapsedTime / 1000
-        val elapsedMinutes = elapsedSeconds / 60
-        val elapsedHours = elapsedMinutes / 60
+        Log.d("UPDATEMETRIC","UPDATING")
+        if(sharedPrefController.getPlay()){
+            startTime += 1
 
 
-        // Calculate average speed (using current speed as an example)
-        val currentSpeed = speedDisplay.text.toString().replace(" km/h", "").toDoubleOrNull() ?: 0.0
-        val totalSpeed = totalDistance / (elapsedHours + elapsedMinutes / 60.0)
+            elapsedTime = startTime
+            val elapsedSeconds = elapsedTime / 1000
+            val elapsedMinutes = elapsedSeconds / 60
+            val elapsedHours = elapsedMinutes / 60
 
-        totalDistance += currentSpeed * (elapsedSeconds / 3600)
 
-        // Calculate average pace (time to cover 1 km)
-        val averagePace = if (totalDistance > 0) {
-            (elapsedMinutes + elapsedHours * 60) / totalDistance
-        } else {
-            0.0
+            // Calculate average speed (using current speed as an example)
+            val currentSpeed = speedDisplay.text.toString().replace(" km/h", "").toDoubleOrNull() ?: 0.0
+            val totalSpeed = totalDistance / (elapsedHours + elapsedMinutes / 60.0)
+
+            totalDistance += currentSpeed * (elapsedSeconds / 3600)
+
+            // Calculate average pace (time to cover 1 km)
+            val averagePace = if (totalDistance > 0) {
+                (elapsedMinutes + elapsedHours * 60) / totalDistance
+            } else {
+                0.0
+            }
+
+
+            val caloriesBurned = totalDistance * 0.1
+
+            totalCaloriesBurned += caloriesBurned
+            this.timeElapsed.text = formatTime(startTime)
+            this.pace.text = averagePace.toString()
+            this.calories.text = totalCaloriesBurned.toString()
+            this.avgSpeed.text = currentSpeed.toString()
         }
-
-
-        val caloriesBurned = totalDistance * 0.1
-
-        totalCaloriesBurned += caloriesBurned
-        this.timeElapsed.text = formatTime(startTime)
-
-        //this.timeElapsed.text = startTime.toString()
-        this.pace.text = averagePace.toString()
-        this.calories.text = totalCaloriesBurned.toString()
-        this.avgSpeed.text = currentSpeed.toString()
 
         updateMetricsTask?.cancel()
         updateMetricsTimer?.purge()
@@ -337,9 +364,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         updateMetricsTask = object : TimerTask() {
             override fun run() {
                 runOnUiThread{
-                    if(sharedPrefController.getPlay()){
-                        updateMetrics()
-                    }
+                    updateMetrics()
+
                 }
             }
         }

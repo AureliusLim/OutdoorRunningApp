@@ -73,6 +73,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var generateDistance: EditText
     private lateinit var loadingProgressBar: ProgressBar
     private lateinit var blockingView: View
+    private lateinit var stopBtn: ImageButton
+    private var isStopped = false
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -124,6 +126,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.toggleButtonGroup = findViewById(R.id.toggleButtonGroup)
         this.loadingProgressBar = findViewById(R.id.loadingProgressBar)
         this.blockingView = findViewById(R.id.blockingView)
+        this.stopBtn = findViewById(R.id.stop)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startLocationUpdates()
         this.generateDistance = findViewById(R.id.distanceEditText)
@@ -233,9 +236,28 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             // Show the distance layout
             distanceLayout.visibility = View.VISIBLE
         }
+        stopBtn.setOnClickListener{
+            updateRouteTimer?.purge()
+            updateRouteTask?.cancel()
+            running = false
+            startRun()
+            sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
+            sharedPrefController.setStopped(true)
+            showLoadingIndicator()
+            Toast.makeText(this, "Workout saved", Toast.LENGTH_SHORT).show()
+
+            mMap.clear()
+        }
     }
     fun startRun(){
         isPlaying = !isPlaying
+
+        if(!isPlaying){
+            stopBtn.visibility = View.GONE
+        }
+        else{
+            stopBtn.visibility = View.VISIBLE
+        }
         sharedPrefController.changePlay(isPlaying)
         if (isPlaying) {
             playPauseButton.setImageResource(R.drawable.pause)
@@ -395,23 +417,32 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
 
     fun updateRouteAndETA(destination: LatLng) {
         sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), isPlaying)
-        Log.d("currentLOC", "$currentloc")
+        //Log.d("currentLOC", "$currentloc")
         drawRouteToDestination(mMap, currentloc, destination)
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
         // Cancel the previous Timer and TimerTask
         updateRouteTask?.cancel()
         updateRouteTimer?.purge()
         // Schedule the next update in 5 seconds
-        updateRouteTimer = Timer()
-        updateRouteTask = object : TimerTask() {
-            override fun run() {
-                runOnUiThread {
-                    updateRouteAndETA(destination)
+        if(running){
+            updateRouteTimer = Timer()
+            updateRouteTask = object : TimerTask() {
+                override fun run() {
+                    Log.d("CALLED", "draw")
+                    runOnUiThread {
+                        updateRouteAndETA(destination)
+                    }
                 }
             }
+
+            updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
+        }
+        else{
+            Log.d("MapCLEARED", "MAPCLEARED")
+            mMap.clear()
         }
 
-        updateRouteTimer?.schedule(updateRouteTask, 5000) // 5 seconds
+
     }
     // Add a helper function to start location updates
     fun startLocationUpdates() {

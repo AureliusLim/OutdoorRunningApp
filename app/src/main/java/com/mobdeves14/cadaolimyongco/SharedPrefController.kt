@@ -37,9 +37,19 @@ class SharedPrefController(context: Context){
         return sharedPreferences.getBoolean("play", false)
     }
 
+    fun getStopped(): Boolean{
+        return sharedPreferences.getBoolean("stop", false)
+    }
+
     fun changePlay(play: Boolean){
         val editor = sharedPreferences.edit()
         editor.putBoolean("play",!play)
+        editor.apply()
+    }
+
+    fun setStopped(stop: Boolean){
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("stop", stop)
         editor.apply()
     }
 
