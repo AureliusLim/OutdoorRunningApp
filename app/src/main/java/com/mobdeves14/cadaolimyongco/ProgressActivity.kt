@@ -2,6 +2,7 @@ package com.mobdeves14.cadaolimyongco
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.viewModels
@@ -45,10 +46,10 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutDistance.text = workoutList[0].distance.toString()
         this.workoutSpeed.text = workoutList[0].avgSpeed.toString()
         this.actualDate.text = workoutList[0].actualdate
-        val adapter = WorkoutListAdapter()
+        val adapter = WorkoutListAdapter(this)
         this.recyclerView.adapter = adapter
 
-        this.recyclerView.layoutManager  = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        this.recyclerView.layoutManager  = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
 
         workoutViewModel.allWorkouts.observe(this) { workouts ->
@@ -69,12 +70,17 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         }
     }
 
-    override fun onItemClicked(workoutView: WorkoutModel) {
+    override fun onItemClicked(workoutView: Workout) {
         this.workoutDuration.text = workoutView.duration.toString()
         this.workoutCalories.text = workoutView.calories.toString()
-        this.workoutHeart.text = workoutView.heartRate.toString()
         this.workoutDistance.text = workoutView.distance.toString()
         this.workoutSpeed.text = workoutView.avgSpeed.toString()
-        this.actualDate.text = workoutView.actualdate
+        this.actualDate.text = workoutView.date
+
+        Log.d("workoutDuration", workoutView.duration.toString())
+        Log.d("workoutCalories", workoutView.calories.toString())
+        Log.d("workoutDistance", workoutView.distance.toString())
+        Log.d("workoutSpeed", workoutView.avgSpeed.toString())
+        Log.d("monthDay", workoutView.monthDay.toString())
     }
 }

@@ -76,11 +76,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     val apiKey = "AIzaSyDm7Z2QpveiwSsWmh4Vr7iFfD_pepJIFtc"
     private lateinit var handlerThread: HandlerThread
     private lateinit var handler: Handler
+
+    private val workoutViewModel: WorkoutViewModel by viewModels {
+        WorkoutViewModelFactory((application as WorkoutApplication).repository)
+    }
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
         private const val TAG = "MainActivity"
 
     }
+
 
 
     override fun onResume() {
@@ -101,8 +106,16 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             // I ASSUME WE NEED TO ALSO SAVE THE CURRENT DATE, so need to get currentdate here
             //save each entry as this.timeElapsed.text, this.pace.text, this.calories.text, this.avgSpeed.text, the date
 
+//            val workout = Workout(
+//                this.pace.text.toString().toDouble(),
+//                this.timeElapsed.text.toString().toInt(),
+//                this.avgSpeed.text.toString().toDouble(),
+//                this.currDate.text.toString(),
+//                this.
+//                this.calories.text.toString().toInt(),
+//            )
+//            workoutViewModel.insert(workout)
             //then when clicking on the calendar, search all similar dates and set it to the average for all the texts fields
-
 
             // AFTERWARDS
             // SET ALL THE TEXT TO 0
@@ -110,6 +123,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             //    this.pace.text = 0
             //    this.calories.text = 0
             //    this.avgSpeed.text = 0
+
+
         }
         if (sharedPrefController.getRunning()) {
             Log.d("updatedmain","updated main map")
