@@ -46,16 +46,24 @@ abstract class WorkoutDatabase : RoomDatabase() {
                     workoutDao.deleteAll()
 
                     // Add sample words.
-                    var workout = Workout(2.0, 1, 1.0, listofDates[0], listofmonthday[0], listofweekday[0], 12)
+                    var workout = Workout(2.0, 1, 1.0, listofDates[0], listofmonthday[0], listofweekday[0], 12.0)
                     workoutDao.insert(workout)
-                    workout = Workout(1.0, 2, 2.0, listofDates[1], listofmonthday[1], listofweekday[1], 21)
+//                    workout = Workout(40.0, 20, 10.0, listofDates[0], listofmonthday[0], listofweekday[0], 120)
+//                    workoutDao.insert(workout)
+
+                    workout = Workout(1.0, 2, 2.0, listofDates[1], listofmonthday[1], listofweekday[1], 21.0)
                     workoutDao.insert(workout)
-                    workout = Workout(2.0, 4, 9.0, listofDates[2], listofmonthday[2], listofweekday[2], 31)
+                    workout = Workout(2.0, 4, 9.0, listofDates[2], listofmonthday[2], listofweekday[2], 31.0)
                     workoutDao.insert(workout)
-                    workout = Workout(3.0, 3, 3.0, listofDates[3], listofmonthday[3], listofweekday[3], 45)
+                    workout = Workout(3.0, 3, 3.0, listofDates[3], listofmonthday[3], listofweekday[3], 45.0)
                     workoutDao.insert(workout)
-                    workout = Workout(4.0, 7, 4.0, listofDates[4], listofmonthday[4], listofweekday[4], 66)
+                    workout = Workout(4.0, 7, 4.0, listofDates[4], listofmonthday[4], listofweekday[4], 66.0)
                     workoutDao.insert(workout)
+
+                    // Note: Before inserting something in the db, check if the existing date is in the db
+                    // if it is not, then insert it immediately, but if is existing, don't insert
+                    // or use group by
+
 
                 }
             }

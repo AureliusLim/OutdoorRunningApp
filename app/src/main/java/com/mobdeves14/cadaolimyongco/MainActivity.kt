@@ -100,21 +100,41 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         if(sharedPrefController.getStopped()){
             updateRouteTimer?.purge()
             updateRouteTask?.cancel()
-            mMap?.clear()
+//            mMap?.clear() // uncommenting this would cause a mmap lateinit error idk why
             sharedPrefController.setStopped(false)
             // SAVE THE WORKOUT DETAILS HERE
             // I ASSUME WE NEED TO ALSO SAVE THE CURRENT DATE, so need to get currentdate here
             //save each entry as this.timeElapsed.text, this.pace.text, this.calories.text, this.avgSpeed.text, the date
+            // get currmonthday and currweekday
+            val calendar = Calendar.getInstance()
+            var currmonthday = String()
+            var currweekday= String()
+            val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+            val currentDate = calendar.time
+            val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
+            currmonthday = SimpleDateFormat("d", Locale.US).format(currentDate)
+            currweekday = SimpleDateFormat("E", Locale.US).format(currentDate)
+
+            val workout = Workout(
+                this.pace.text.toString().toDouble(),
+                this.elapsedTime,
+                this.avgSpeed.text.toString().toDouble(),
+                this.currDate.text.toString(),
+                currmonthday,
+                currweekday,
+                this.calories.text.toString().toDouble()
+            )
 
 //            val workout = Workout(
-//                this.pace.text.toString().toDouble(),
-//                this.timeElapsed.text.toString().toInt(),
-//                this.avgSpeed.text.toString().toDouble(),
-//                this.currDate.text.toString(),
-//                this.
-//                this.calories.text.toString().toInt(),
+//                100.0,
+//                12,
+//                15.0,
+//                "date",
+//                "monthDay",
+//                "weekDay",
+//                150
 //            )
-//            workoutViewModel.insert(workout)
+            workoutViewModel.insert(workout)
             //then when clicking on the calendar, search all similar dates and set it to the average for all the texts fields
 
             // AFTERWARDS
