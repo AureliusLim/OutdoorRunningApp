@@ -16,6 +16,7 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
     private lateinit var workoutDistance: TextView
     private lateinit var workoutDuration: TextView
     private lateinit var workoutCalories: TextView
+    private lateinit var pace: TextView
     private lateinit var workoutHeart: TextView
     private lateinit var workoutSpeed: TextView
     private lateinit var actualDate: TextView
@@ -39,7 +40,7 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutHeart = findViewById(R.id.avg_speed_tv2)
         this.workoutSpeed = findViewById(R.id.avg_speed_tv)
         this.actualDate = findViewById(R.id.actualdate)
-
+        this.pace = findViewById(R.id.avg_speed_tv2)
         this.workoutDuration.text =  workoutList[0].duration.toString()
         this.workoutCalories.text =  workoutList[0].calories.toString()
         this.workoutHeart.text =  workoutList[0].heartRate.toString()
@@ -76,7 +77,7 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutDistance.text = workoutView.distance.toString()
         this.workoutSpeed.text = workoutView.avgSpeed.toString()
         this.actualDate.text = workoutView.date
-
+        this.pace.text = workoutView.pace
         Log.d("workoutDuration", workoutView.duration.toString())
         Log.d("workoutCalories", workoutView.calories.toString())
         Log.d("workoutDistance", workoutView.distance.toString())

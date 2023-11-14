@@ -77,9 +77,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var handlerThread: HandlerThread
     private lateinit var handler: Handler
 
-    private val workoutViewModel: WorkoutViewModel by viewModels {
-        WorkoutViewModelFactory((application as WorkoutApplication).repository)
-    }
     companion object{
         private const val LOCATION_REQUEST_CODE = 1
         private const val TAG = "MainActivity"
@@ -91,58 +88,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     override fun onResume() {
         super.onResume()
         // Retrieve shared preferences values here
-        this.distanceDisplay.text = sharedPrefController.getDistance()
+        if(sharedPrefController.getRunning()){
+            this.distanceDisplay.text = sharedPrefController.getDistance()
+        }
+        else{
+            this.distanceDisplay.text = "0 km"
+        }
         this.ETAduration.text = sharedPrefController.getETA()
 
-//        if(sharedPrefController.getPlay()){
-//            updateMetrics()
-//        }
+
         if(sharedPrefController.getStopped()){
             updateRouteTimer?.purge()
             updateRouteTask?.cancel()
+//            mMap?.run {
+//                mMap.clear()
+//            }
 //            mMap?.clear() // uncommenting this would cause a mmap lateinit error idk why
             sharedPrefController.setStopped(false)
-            // SAVE THE WORKOUT DETAILS HERE
-            // I ASSUME WE NEED TO ALSO SAVE THE CURRENT DATE, so need to get currentdate here
-            //save each entry as this.timeElapsed.text, this.pace.text, this.calories.text, this.avgSpeed.text, the date
-            // get currmonthday and currweekday
-            val calendar = Calendar.getInstance()
-            var currmonthday = String()
-            var currweekday= String()
-            val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
-            val currentDate = calendar.time
-            val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
-            currmonthday = SimpleDateFormat("d", Locale.US).format(currentDate)
-            currweekday = SimpleDateFormat("E", Locale.US).format(currentDate)
 
-            val workout = Workout(
-                this.pace.text.toString().toDouble(),
-                this.elapsedTime,
-                this.avgSpeed.text.toString().toDouble(),
-                this.currDate.text.toString(),
-                currmonthday,
-                currweekday,
-                this.calories.text.toString().toDouble()
-            )
 
-//            val workout = Workout(
-//                100.0,
-//                12,
-//                15.0,
-//                "date",
-//                "monthDay",
-//                "weekDay",
-//                150
-//            )
-            workoutViewModel.insert(workout)
-            //then when clicking on the calendar, search all similar dates and set it to the average for all the texts fields
-
-            // AFTERWARDS
-            // SET ALL THE TEXT TO 0
-            //    this.timeElapsed.text = 0
-            //    this.pace.text = 0
-            //    this.calories.text = 0
-            //    this.avgSpeed.text = 0
 
 
         }
@@ -181,6 +145,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         handlerThread = HandlerThread("UpdateMetricsThread")
         handlerThread.start()
         handler = Handler(handlerThread.looper)
+
+
 
         //setup metrics
         this.progressTab = findViewById(R.id.progresstab)
@@ -316,7 +282,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), true,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), sharedPrefController.getPlay())
 
         drawRouteToDestination(mMap, currentloc, destination)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 16f))
         // Cancel the previous Timer and TimerTask
         updateRouteTask?.cancel()
         updateRouteTimer?.purge()
@@ -358,7 +324,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         }
     }
     private fun updateMetrics() {
-        Log.d("UPDATEMETRIC","UPDATING")
+        //Log.d("UPDATEMETRIC","UPDATING")
         if(sharedPrefController.getPlay()){
             startTime += 1
 
@@ -390,6 +356,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             this.pace.text = averagePace.toString()
             this.calories.text = totalCaloriesBurned.toString()
             this.avgSpeed.text = currentSpeed.toString()
+
+            sharedPrefController.saveStats(this.totalDistance.toString(), formatTime(startTime), averagePace.toString(), totalCaloriesBurned.toString(), currentSpeed.toString())
         }
 
         updateMetricsTask?.cancel()

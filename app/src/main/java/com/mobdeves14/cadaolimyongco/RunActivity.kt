@@ -8,6 +8,8 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -20,6 +22,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.Status
@@ -40,6 +43,9 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.maps.route.extensions.drawRouteOnMap
 import java.security.AccessController.getContext
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
 
@@ -75,6 +81,11 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
     private lateinit var blockingView: View
     private lateinit var stopBtn: ImageButton
     private var isStopped = false
+    private lateinit var distanceHandler: Handler
+    private lateinit var distanceHandlerThread: HandlerThread
+    private val workoutViewModel: WorkoutViewModel by viewModels {
+        WorkoutViewModelFactory((application as WorkoutApplication).repository)
+    }
     companion object{
         const val LOCATION_REQUEST_CODE = 1
          const val TAG = "RunActivity"
@@ -84,9 +95,16 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         super.onResume()
 
         // Retrieve shared preferences values here
-        this.distanceDisplay.text = sharedPrefController.getDistance()
+        if(sharedPrefController.getRunning()){
+            this.distanceDisplay.text = sharedPrefController.getDistance()
+        }
+        else{
+            this.distanceDisplay.text = "0 km"
+        }
+
         this.ETAduration.text = sharedPrefController.getETA()
         this.running = sharedPrefController.getRunning()
+
 
         if(this.isPlaying){
             playPauseButton.setImageResource(R.drawable.pause)
@@ -129,6 +147,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         this.stopBtn = findViewById(R.id.stop)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         startLocationUpdates()
+        distanceHandler = Handler(Looper.getMainLooper())
+
         this.generateDistance = findViewById(R.id.distanceEditText)
         val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         this.generateDistance.setOnEditorActionListener { _, actionId, event ->
@@ -146,15 +166,17 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     startRun()
                     // Save destination and other metrics in SharedPreferences
                     sharedPrefController.saveMetrics(
-                        distanceDisplay.text.toString(),
+                       "0 km",
                         ETAduration.text.toString(),
                         running,
                         destinationLatLng.longitude.toString(),
                         destinationLatLng.latitude.toString(),
                         this.isPlaying
                     )
+
                     // Draw the route to the randomly generated destination
                     updateRouteAndETA(destinationLatLng)
+                    distanceHandler.post(isDone)
                 }
                 else{
                     Toast.makeText(this, "Distance has to be within 0-10 km", Toast.LENGTH_SHORT).show()
@@ -237,10 +259,12 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             distanceLayout.visibility = View.VISIBLE
         }
         stopBtn.setOnClickListener{
+            distanceHandler.removeCallbacks(isDone)
             updateRouteTimer?.purge()
             updateRouteTask?.cancel()
             running = false
             startRun()
+            saveRun()
             sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
             sharedPrefController.setStopped(true)
             showLoadingIndicator()
@@ -249,6 +273,55 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             mMap.clear()
         }
     }
+    private val isDone = object : Runnable{
+        override fun run(){
+            if(sharedPrefController.getDistance()!!.split(" ")[1] != "km" && sharedPrefController.getRunning() && isPlaying){
+
+                updateRouteTimer?.purge()
+                updateRouteTask?.cancel()
+                running = false
+                startRun()
+                saveRun()
+                sharedPrefController.saveMetrics("0 km", "0 minutes", false, "", "", false)
+                sharedPrefController.setStopped(true)
+                showLoadingIndicator()
+                Toast.makeText(this@RunActivity, "Workout saved", Toast.LENGTH_SHORT).show()
+
+                mMap.clear()
+                distanceHandler.removeCallbacks(this)
+            }
+            else{
+                distanceHandler.postDelayed(this, 1000)
+            }
+
+            Log.d("ISDONETHREAD","CHECKING IF DONE")
+        }
+
+
+    }
+    fun saveRun(){
+        val calendar = Calendar.getInstance()
+        var currmonthday = String()
+        var currweekday= String()
+        val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+        val currentDate = calendar.time
+        val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
+        currmonthday = SimpleDateFormat("d", Locale.US).format(currentDate)
+        currweekday = SimpleDateFormat("E", Locale.US).format(currentDate)
+
+        val workout = Workout(
+            sharedPrefController.gettotalDistance()!!.toDouble(),
+            sharedPrefController.getPace().toString(),
+            sharedPrefController.getElapsedTime()!!.toString(),
+            sharedPrefController.getAvgSpeed()!!.toDouble(),
+            formattedDateFullMonth.toString(),
+            currmonthday,
+            currweekday,
+            sharedPrefController.getCalories()!!.toDouble()
+        )
+
+        workoutViewModel.insert(workout)
+    }
     fun startRun(){
         isPlaying = !isPlaying
 
@@ -256,6 +329,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             stopBtn.visibility = View.GONE
         }
         else{
+
             stopBtn.visibility = View.VISIBLE
         }
         sharedPrefController.changePlay(isPlaying)
@@ -342,6 +416,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
                     Log.d(RunActivity.TAG, destinationLatLng.toString())
                     // Draw route to the selected destination
                     updateRouteAndETA(destinationLatLng)
+                    distanceHandler.post(isDone)
                 }
             }
 
@@ -419,7 +494,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         sharedPrefController.saveMetrics(distanceDisplay.text.toString(), ETAduration.text.toString(), running,  destinationLatLng.longitude.toString(), destinationLatLng.latitude.toString(), isPlaying)
         //Log.d("currentLOC", "$currentloc")
         drawRouteToDestination(mMap, currentloc, destination)
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 12f))
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentloc, 16f))
         // Cancel the previous Timer and TimerTask
         updateRouteTask?.cancel()
         updateRouteTimer?.purge()
@@ -428,7 +503,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             updateRouteTimer = Timer()
             updateRouteTask = object : TimerTask() {
                 override fun run() {
-                    Log.d("CALLED", "draw")
+                    //Log.d("CALLED", "draw")
                     runOnUiThread {
                         updateRouteAndETA(destination)
                     }
