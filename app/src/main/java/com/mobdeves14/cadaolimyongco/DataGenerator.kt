@@ -11,13 +11,15 @@ class DataGenerator {
             val listofmonthday = ArrayList<String>()
             val listofweekday= ArrayList<String>()
             val listofDates= ArrayList<String>()
-            val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+
             val data = ArrayList<WorkoutModel>()
             for(i in 0 until 5){
 
                 val currentDate = calendar.time
-                val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
-                listofDates.add(formattedDateFullMonth)
+                val fullformat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+                //val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
+                val formattedDate = fullformat.format(currentDate)
+                listofDates.add(formattedDate)
                 listofmonthday.add( SimpleDateFormat("d", Locale.US).format(currentDate))
                 listofweekday.add(SimpleDateFormat("E", Locale.US).format(currentDate))
                 calendar.add(Calendar.DAY_OF_YEAR, -1)

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 class WorkoutListAdapter(private val listener:SelectListener) : ListAdapter<Workout, WorkoutListAdapter.WorkoutViewHolder>(WordsComparator()) {
-
+    // Update the list of workouts in the adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutViewHolder {
         return WorkoutViewHolder.create(parent)
     }

@@ -303,7 +303,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
         val calendar = Calendar.getInstance()
         var currmonthday = String()
         var currweekday= String()
-        val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+        val dateFormatFullMonth = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
         val currentDate = calendar.time
         val formattedDateFullMonth = dateFormatFullMonth.format(currentDate)
         currmonthday = SimpleDateFormat("d", Locale.US).format(currentDate)
@@ -311,8 +311,8 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
 
         val workout = Workout(
             sharedPrefController.gettotalDistance()!!.toDouble(),
-            sharedPrefController.getPace().toString(),
-            sharedPrefController.getElapsedTime()!!.toString(),
+            sharedPrefController.getPace()!!,
+            sharedPrefController.getElapsedTime()!!,
             sharedPrefController.getAvgSpeed()!!.toDouble(),
             formattedDateFullMonth.toString(),
             currmonthday,

@@ -31,7 +31,7 @@ abstract class WorkoutDatabase : RoomDatabase() {
                     val listofmonthday = ArrayList<String>()
                     val listofweekday= ArrayList<String>()
                     val listofDates= ArrayList<String>()
-                    val dateFormatFullMonth = SimpleDateFormat("EEEE, MMMM dd yyyy", Locale.US)
+                    val dateFormatFullMonth = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
                     val data = ArrayList<WorkoutModel>()
                     for(i in 0 until 5){
 
@@ -46,19 +46,19 @@ abstract class WorkoutDatabase : RoomDatabase() {
                     workoutDao.deleteAll()
 
                     // Add sample words.
-                    var workout = Workout(2.0, "1:00", "1:00", 1.0, listofDates[0], listofmonthday[0], listofweekday[0], 12.0)
+                    var workout = Workout(2.0, 9, 10, 1.0, listofDates[0], listofmonthday[0], listofweekday[0], 12.0)
 
                     workoutDao.insert(workout)
 //                    workout = Workout(40.0, 20, 10.0, listofDates[0], listofmonthday[0], listofweekday[0], 120)
-//                    workoutDao.insert(workout)
+//                    workoutDao.insert(workout)   Friday, November 17    2023-11-17
 
-                    workout = Workout(1.0, "1:00","1:00", 2.0, listofDates[1], listofmonthday[1], listofweekday[1], 21.0)
+                    workout = Workout(1.0, 1,5, 2.0, listofDates[1], listofmonthday[1], listofweekday[1], 21.0)
                     workoutDao.insert(workout)
-                    workout = Workout(2.0, "1:00","1:00", 9.0, listofDates[2], listofmonthday[2], listofweekday[2], 31.0)
+                    workout = Workout(2.0, 2,6, 9.0, listofDates[2], listofmonthday[2], listofweekday[2], 31.0)
                     workoutDao.insert(workout)
-                    workout = Workout(3.0, "1:00","1:00", 3.0, listofDates[3], listofmonthday[3], listofweekday[3], 45.0)
+                    workout = Workout(3.0, 3,7, 3.0, listofDates[3], listofmonthday[3], listofweekday[3], 45.0)
                     workoutDao.insert(workout)
-                    workout = Workout(4.0, "1:00","1:00", 4.0, listofDates[4], listofmonthday[4], listofweekday[4], 66.0)
+                    workout = Workout(4.0, 4,8, 4.0, listofDates[4], listofmonthday[4], listofweekday[4], 66.0)
                     workoutDao.insert(workout)
 
                     // Note: Before inserting something in the db, check if the existing date is in the db

@@ -14,6 +14,7 @@ class WorkoutViewModel(private val repository: WorkoutRepository) : ViewModel() 
     //   the UI when the data actually changes.
     // - Repository is completely separated from the UI through the ViewModel.
     val allWorkouts: LiveData<List<Workout>> = repository.allWorkouts.asLiveData()
+    val filteredWorkouts: LiveData<List<Workout>> = repository.filteredWorkouts.asLiveData()
 
     /**
      * Launching a new coroutine to insert the data in a non-blocking way

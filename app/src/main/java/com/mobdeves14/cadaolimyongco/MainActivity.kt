@@ -340,7 +340,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             val totalSpeed = totalDistance / (elapsedHours + elapsedMinutes / 60.0)
 
             totalDistance += currentSpeed * (elapsedSeconds / 3600)
-
+            Log.d("TOtal Distance","$elapsedSeconds")
+            Log.d("TOtal Distance2","$totalDistance")
             // Calculate average pace (time to cover 1 km)
             val averagePace = if (totalDistance > 0) {
                 (elapsedMinutes + elapsedHours * 60) / totalDistance
@@ -357,7 +358,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             this.calories.text = totalCaloriesBurned.toString()
             this.avgSpeed.text = currentSpeed.toString()
 
-            sharedPrefController.saveStats(this.totalDistance.toString(), formatTime(startTime), averagePace.toString(), totalCaloriesBurned.toString(), currentSpeed.toString())
+            sharedPrefController.saveStats(this.totalDistance.toString(), startTime, averagePace.toLong(), totalCaloriesBurned.toString(), currentSpeed.toString())
         }
 
         updateMetricsTask?.cancel()

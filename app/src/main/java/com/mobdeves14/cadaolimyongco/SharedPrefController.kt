@@ -21,11 +21,11 @@ class SharedPrefController(context: Context){
     }
 
 
-    fun saveStats(totalDistance: String, timeElapsed: String, pace: String, calories: String, avgSpeed: String){
+    fun saveStats(totalDistance: String, timeElapsed: Long, pace: Long, calories: String, avgSpeed: String){
         val editor = sharedPreferences.edit()
         editor.putString("totalDistance", totalDistance)
-        editor.putString("timeElapsed", timeElapsed)
-        editor.putString("pace", pace)
+        editor.putLong("timeElapsed", timeElapsed)
+        editor.putLong("pace", pace)
         editor.putString("calories", calories)
         editor.putString("avgSpeed", avgSpeed)
         editor.apply()
@@ -67,11 +67,11 @@ class SharedPrefController(context: Context){
     fun gettotalDistance(): String? {
         return sharedPreferences.getString("totalDistance", null)
     }
-    fun getPace(): String? {
-        return sharedPreferences.getString("pace", null)
+    fun getPace(): Long? {
+        return sharedPreferences.getLong("pace", 0)
     }
-    fun getElapsedTime(): String? {
-        return sharedPreferences.getString("timeElapsed", null)
+    fun getElapsedTime(): Long? {
+        return sharedPreferences.getLong("timeElapsed", 0)
     }
     fun getAvgSpeed(): String? {
         return sharedPreferences.getString("avgSpeed", null)
