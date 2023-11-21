@@ -17,7 +17,7 @@ interface WorkoutDao {
     @Query("DELETE FROM workout_table")
     suspend fun deleteAll()
 
-    @Query("SELECT id, SUM(distance) AS distance, AVG(pace) AS pace, SUM(duration) AS duration, ROUND(AVG(avgSpeed), 2) AS avgSpeed, date, monthDay, weekDay, SUM(calories) AS calories " +
+    @Query("SELECT id, ROUND(SUM(distance), 2) AS distance, ROUND(AVG(pace), 2) AS pace, SUM(duration) AS duration, ROUND(AVG(avgSpeed), 2) AS avgSpeed, date, monthDay, weekDay, ROUND(SUM(calories), 2) AS calories " +
             "FROM workout_table " +
             "GROUP BY date " +
             "Order BY date DESC")
