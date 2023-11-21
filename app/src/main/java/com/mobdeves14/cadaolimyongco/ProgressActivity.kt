@@ -104,7 +104,7 @@ class ProgressActivity: AppCompatActivity(), SelectListener {
         this.workoutDuration.text = formatTime(workoutView.duration)
         this.workoutCalories.text = workoutView.calories.toString()
         this.workoutDistance.text = workoutView.distance.toString()
-        this.workoutSpeed.text = String.format("%.1f", workoutView.avgSpeed)
+        this.workoutSpeed.text = String.format("%.2f", workoutView.avgSpeed)
         this.actualDate.text = targetFormat.format(parsedDate)
         this.pace.text = formatTime(workoutView.pace)
 

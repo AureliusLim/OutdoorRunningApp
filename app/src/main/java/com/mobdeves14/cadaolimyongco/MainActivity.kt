@@ -348,10 +348,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             } else {
                 0.0
             }
+            Log.d("averagePace in MainActivity", averagePace.toString())
 
 
             val caloriesBurned = totalDistance * 0.1
 
+            Log.d("caloriesBurned in MainActivity", caloriesBurned.toString())
             totalCaloriesBurned += caloriesBurned
             this.timeElapsed.text = formatTime(startTime)
             this.pace.text = averagePace.toString()
