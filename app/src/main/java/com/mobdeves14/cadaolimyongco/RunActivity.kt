@@ -357,7 +357,7 @@ class RunActivity: AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClick
             else if (this.toggleButtonGroup.checkedButtonId == this.setroutebtn.id) {
                 supportFragmentManager.beginTransaction()
                     .show(autocompleteFragment)
-                    .commit()
+                    .commitAllowingStateLoss()
                 isAutocompleteVisible = true
             }
         }
