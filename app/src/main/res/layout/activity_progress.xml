@@ -157,57 +157,57 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.141"
+        app:layout_constraintHorizontal_bias="0.089"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.657" />
+        app:layout_constraintVertical_bias="0.661" />
 
-        <TextView
-            android:id="@+id/duration_min11"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/tv_duration"
-            android:textColor="#424242"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.141"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.694" />
+    <TextView
+        android:id="@+id/duration_min11"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/tv_duration"
+        android:textColor="#424242"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.089"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.697" />
 
-        <TextView
-            android:id="@+id/dur_min"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="min"
-            android:textColor="#424242"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.275"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.695" />
+    <TextView
+        android:id="@+id/dur_min"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="min"
+        android:textColor="#424242"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.396"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.701" />
 
-        <TextView
-            android:id="@+id/calories_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-medium"
-            android:text="@string/tv_calories"
-            android:textColor="#424242"
-            android:textSize="18sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.616"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.694" />
+    <TextView
+        android:id="@+id/calories_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/tv_calories"
+        android:textColor="#424242"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.616"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.701" />
 
-        <TextView
+    <TextView
             android:id="@+id/calories_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -222,20 +222,20 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.658" />
 
-        <TextView
-            android:id="@+id/cal_kcal2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="kcal"
-            android:textColor="#424242"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.727"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.695" />
+    <TextView
+        android:id="@+id/cal_kcal2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="kcal"
+        android:textColor="#424242"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.889"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.702" />
 
     <TextView
         android:id="@+id/avgs_km"
@@ -247,10 +247,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.695"
+        app:layout_constraintHorizontal_bias="0.893"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.832" />
+        app:layout_constraintVertical_bias="0.851" />
 
     <TextView
         android:id="@+id/avg_speed_tv"
@@ -262,25 +262,25 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.582"
+        app:layout_constraintHorizontal_bias="0.592"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.831" />
+        app:layout_constraintVertical_bias="0.851" />
 
-        <TextView
-            android:id="@+id/avgs_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif"
-            android:text="@string/tv_speed_title"
-            android:textColor="#BDBDBD"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.671"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.792" />
+    <TextView
+        android:id="@+id/avgs_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/tv_speed_title"
+        android:textColor="#BDBDBD"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.683"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.809" />
 
     <TextView
         android:id="@+id/heart_bpm"
@@ -292,10 +292,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.31"
+        app:layout_constraintHorizontal_bias="0.365"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.832" />
+        app:layout_constraintVertical_bias="0.851" />
 
     <TextView
         android:id="@+id/avg_speed_tv2"
@@ -307,10 +307,10 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.134"
+        app:layout_constraintHorizontal_bias="0.114"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.841" />
+        app:layout_constraintVertical_bias="0.85" />
 
     <TextView
         android:id="@+id/avgs_header2"
@@ -322,10 +322,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.158"
+        app:layout_constraintHorizontal_bias="0.112"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.795" />
+        app:layout_constraintVertical_bias="0.811" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -351,8 +351,8 @@
         android:id="@+id/imageView10"
         android:layout_width="18dp"
         android:layout_height="22dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintStart_toEndOf="@+id/avgs_header2"
         app:layout_constraintTop_toTopOf="@+id/imageView7"
         app:srcCompat="@drawable/heartrate" />

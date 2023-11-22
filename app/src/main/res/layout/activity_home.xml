@@ -168,10 +168,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.14"
+        app:layout_constraintHorizontal_bias="0.135"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.655" />
+        app:layout_constraintVertical_bias="0.615" />
 
     <TextView
         android:id="@+id/duration_min11"
@@ -183,10 +183,10 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.148"
+        app:layout_constraintHorizontal_bias="0.125"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7" />
+        app:layout_constraintVertical_bias="0.651" />
 
     <TextView
         android:id="@+id/dur_min"
@@ -198,10 +198,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.26"
+        app:layout_constraintHorizontal_bias="0.286"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.693" />
+        app:layout_constraintVertical_bias="0.655" />
 
     <TextView
         android:id="@+id/calories_tv"
@@ -213,10 +213,10 @@
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.629"
+        app:layout_constraintHorizontal_bias="0.582"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.7" />
+        app:layout_constraintVertical_bias="0.65" />
 
     <TextView
         android:id="@+id/calories_header"
@@ -231,7 +231,7 @@
         app:layout_constraintHorizontal_bias="0.638"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.655" />
+        app:layout_constraintVertical_bias="0.614" />
 
     <TextView
         android:id="@+id/cal_kcal2"
@@ -243,10 +243,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.752"
+        app:layout_constraintHorizontal_bias="0.84"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.693" />
+        app:layout_constraintVertical_bias="0.653" />
 
     <TextView
         android:id="@+id/avgs_km"
@@ -258,10 +258,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.69"
+        app:layout_constraintHorizontal_bias="0.876"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.84" />
+        app:layout_constraintVertical_bias="0.859" />
 
     <TextView
         android:id="@+id/avg_speed_tv"
@@ -276,7 +276,7 @@
         app:layout_constraintHorizontal_bias="0.582"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.84" />
+        app:layout_constraintVertical_bias="0.857" />
 
     <TextView
         android:id="@+id/avgs_header"
@@ -291,7 +291,7 @@
         app:layout_constraintHorizontal_bias="0.671"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.805" />
+        app:layout_constraintVertical_bias="0.81" />
 
     <TextView
         android:id="@+id/heart_bpm"
@@ -303,7 +303,7 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.254"
+        app:layout_constraintHorizontal_bias="0.305"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.847" />
@@ -333,10 +333,10 @@
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.158"
+        app:layout_constraintHorizontal_bias="0.131"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.811" />
+        app:layout_constraintVertical_bias="0.81" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -352,8 +352,8 @@
         android:id="@+id/imageView9"
         android:layout_width="18dp"
         android:layout_height="22dp"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintStart_toEndOf="@+id/calories_header"
         app:layout_constraintTop_toTopOf="@+id/imageView12"
         app:srcCompat="@drawable/calories" />
@@ -362,8 +362,8 @@
         android:id="@+id/imageView10"
         android:layout_width="18dp"
         android:layout_height="22dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintStart_toEndOf="@+id/avgs_header2"
         app:layout_constraintTop_toTopOf="@+id/imageView14"
         app:srcCompat="@drawable/heartrate" />
@@ -401,6 +401,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingTop="10dp"
             app:srcCompat="@drawable/home" />
 
         <ImageButton
