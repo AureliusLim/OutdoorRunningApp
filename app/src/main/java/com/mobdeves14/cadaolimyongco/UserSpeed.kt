@@ -3,6 +3,9 @@ package com.mobdeves14.cadaolimyongco
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.icu.math.BigDecimal
+import android.icu.math.MathContext
+import android.icu.number.Precision
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -10,6 +13,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import java.math.RoundingMode
+import kotlin.math.ceil
 
 class UserSpeed {
     private lateinit var locationManager: LocationManager
@@ -36,9 +41,11 @@ class UserSpeed {
             }
         }
     }
+
     fun getUserSpeed():String{
         val kph = userSpeed * 3.6
-        return kph.toString()
+        val roundedUpValue = BigDecimal(kph.toString()).setScale(2, MathContext.ROUND_CEILING)
+        return roundedUpValue.toString()
     }
     fun startLocationUpdates(context: Context) {
         if (locationManager != null) {

@@ -330,7 +330,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
 
 
             elapsedTime = startTime
-            val elapsedSeconds = elapsedTime
+            val elapsedSeconds = elapsedTime.toDouble()
             val elapsedMinutes = elapsedSeconds / 60
             val elapsedHours = elapsedMinutes / 60
 
@@ -342,16 +342,22 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             totalDistance += currentSpeed * (elapsedSeconds / 3600)
 
             Log.d("currentSpeed","$currentSpeed")
+            Log.d("elapsedSeconds", "$elapsedSeconds")
+            Log.d("elapsedSecondsToHour", (elapsedSeconds / 3600).toString()) // displays 0
+            Log.d("elapsedHours", "$elapsedHours") // displays 0
+
             // Calculate average pace (time to cover 1 km)
             val averagePace = if (totalDistance > 0) {
                 (elapsedMinutes + elapsedHours * 60) / totalDistance
             } else {
                 0.0
             }
+            Log.d("averagePace in MainActivity", averagePace.toString())
 
 
             val caloriesBurned = totalDistance * 0.1
 
+            Log.d("caloriesBurned in MainActivity", caloriesBurned.toString())
             totalCaloriesBurned += caloriesBurned
             this.timeElapsed.text = formatTime(startTime)
             this.pace.text = averagePace.toString()
