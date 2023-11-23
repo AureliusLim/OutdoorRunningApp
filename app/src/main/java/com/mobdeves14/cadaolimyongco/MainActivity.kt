@@ -355,13 +355,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             Log.d("averagePace in MainActivity", averagePace.toString())
 
 
-            val caloriesBurned = totalDistance * 0.1
+            val caloriesBurned = (totalDistance * 0.1)
 
             Log.d("caloriesBurned in MainActivity", caloriesBurned.toString())
             totalCaloriesBurned += caloriesBurned
             this.timeElapsed.text = formatTime(startTime)
-            this.pace.text = averagePace.toString()
-            this.calories.text = totalCaloriesBurned.toString()
+            this.pace.text = String.format("%.1f", averagePace)
+            this.calories.text = String.format("%.1f", caloriesBurned)
             this.avgSpeed.text = currentSpeed.toString()
 
             sharedPrefController.saveStats(this.totalDistance.toString(), startTime, averagePace.toLong(), totalCaloriesBurned.toString(), currentSpeed.toString())
