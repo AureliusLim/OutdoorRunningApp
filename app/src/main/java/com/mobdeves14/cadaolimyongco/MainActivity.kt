@@ -339,7 +339,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             val currentSpeed = speedDisplay.text.toString().replace(" km/h", "").toDoubleOrNull() ?: 0.0
             val totalSpeed = totalDistance / (elapsedHours + elapsedMinutes / 60.0)
 
-            totalDistance += currentSpeed * (elapsedSeconds / 3600)
+            totalDistance += currentSpeed / 3600
 
             Log.d("currentSpeed","$currentSpeed")
             Log.d("elapsedSeconds", "$elapsedSeconds")
@@ -347,10 +347,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             Log.d("elapsedHours", "$elapsedHours") // displays 0
 
             // Calculate average pace (time to cover 1 km)
-            val averagePace = if (totalDistance > 0) {
-                (elapsedMinutes + elapsedHours * 60) / totalDistance
+            val averagePace = if (currentSpeed > 0) {
+                1 / (currentSpeed / 60) // Time to cover 1 kilometer in minutes
             } else {
-                0.0
+                0.0 // If the current speed is zero, pace is considered as 0 for simplicity
             }
             Log.d("averagePace in MainActivity", averagePace.toString())
 
