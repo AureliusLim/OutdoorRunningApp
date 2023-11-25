@@ -358,7 +358,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             val caloriesBurned = (totalDistance * 0.63 * 60)
 
             Log.d("caloriesBurned in MainActivity", caloriesBurned.toString())
-            totalCaloriesBurned += caloriesBurned
+            totalCaloriesBurned = caloriesBurned
             this.timeElapsed.text = formatTime(startTime)
             this.pace.text = String.format("%.1f", averagePace)
             this.calories.text = String.format("%.1f", caloriesBurned)
